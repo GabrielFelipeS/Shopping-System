@@ -8,6 +8,7 @@ import com.br.onlineshoppingsystem.domain.Customer;
 import com.br.onlineshoppingsystem.entities.paymentMethod.EPaymentMethod;
 import com.br.onlineshoppingsystem.entities.paymentMethod.IPaymentMethod;
 import com.br.onlineshoppingsystem.exceptions.DomainException;
+import com.br.onlineshoppingsystem.view.TerminalView;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +20,7 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
     @Override
     public void run(){
 
-    	printMenu();
+    	TerminalView.printWelcome();
     	
     	System.out.println("\n-- To create a personalized cart for you, we need you sign up --\n");
 
@@ -36,36 +37,36 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
             System.out.print("Shipping address (CEP/ZIP code - only integers): ");
             addressInput = sc.nextLine();  // Change to nextLine() to read the whole line
 
-            if (isEmailAndNameValidPersonalized(name, email)) {
+            
                 try {
-                    address = Long.parseLong(addressInput);  // Try to parse the input as a long
+                	isEmailAndNameValidPersonalized(name, email);
+                	addressInput = formatAddress(addressInput);
+                	address = Long.parseLong(addressInput);  // Try to parse the input as a long
                     break;  // Break the loop if a valid address is obtained
                 } catch (NumberFormatException e) {
                     System.out.println("\nInvalid address!");
                     System.out.println("\nInvalid information. Please enter valid values!");
+                } catch(IllegalArgumentException e) {
+                
                 }
-            } else {
                 System.out.println();
                 if (name.length() <= 2) System.out.println("Invalid name!");
                 if (!email.endsWith("@gmail.com") || email.length() <= 10) System.out.println("Invalid email!");
 
                 System.out.println("\nInvalid information. Please enter valid values!");
 
-            }
+            
         }
 
         Customer customer = new Customer(name, email, address, new ShoppingCart());
         choiceOfMenus(customer);
     }
 
-    private void printMenu() {
-        System.out.println();
-        System.out.println("    ╔═══════════════════════════════╗");
-        System.out.println("    ║                               ║");
-        System.out.println("    ║   WELCOME TO SHOPPING SYSTEM  ║");
-        System.out.println("    ║                               ║");
-        System.out.println("    ╚═══════════════════════════════╝");
+
+	private String formatAddress(String addressInput) {
+		return addressInput.replaceAll("[^\\d]", "");
 	}
+
 
 	void choiceOfMenus(Customer customer) {
     	boolean finishProgram = false;
@@ -94,28 +95,14 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 	@Override
     public void browseProducts(Eletronics eletronics, Books book, Clothing clothing) {
 
-        System.out.println();
-        System.out.println("╔════════════════════════════════╗");
-        System.out.println("║  AVAILABLE PRODUCT CATEGORIES  ║");
-        System.out.println("╚════════════════════════════════╝");
-
-        System.out.println("\n1. Electronics");
-        System.out.println("2. Clothing");
-        System.out.println("3. Books");
-        System.out.println("4. Back to menu");
-        System.out.print("Please choose a category to view its products or back to menu: ");
-
+		TerminalView.printAvaibleProduct();
+       
         String productChoose = sc.next();
 
         while (!containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose)) {
-
-            System.out.println("\n1. Electronics");
-            System.out.println("2. Clothing");
-            System.out.println("3. Books");
-            System.out.println("4. Back to menu");
-            System.out.print("Choose a valid option: ");
-            productChoose = sc.next();
-
+        	TerminalView.printChoiceAvailabelProducts(); 
+        	
+        	productChoose = sc.next();
         }
 
         System.out.println();
