@@ -15,480 +15,503 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
-    Scanner sc = new Scanner(System.in);
+	Scanner sc = new Scanner(System.in);
 
-    @Override
-    public void run(){
+	@Override
+	public void run() {
 
-    	TerminalView.printWelcome();
-    	
-    	System.out.println("\n-- To create a personalized cart for you, we need you sign up --\n");
+		TerminalView.printWelcome();
 
-        String name, email, addressInput;
-        long address;
+		System.out.println("\n-- To create a personalized cart for you, we need you sign up --\n");
 
-        while (true) {
-            System.out.print("Name: ");
-            name = sc.nextLine();
+		String name, email, addressInput;
+		long address;
 
-            System.out.print("Email (@gmail.com): ");
-            email = sc.nextLine();  // Change to nextLine() to read the whole line
+		while (true) {
+			System.out.print("Name: ");
+			name = sc.nextLine();
 
-            System.out.print("Shipping address (CEP/ZIP code - only integers): ");
-            addressInput = sc.nextLine();  // Change to nextLine() to read the whole line
+			System.out.print("Email (@gmail.com): ");
+			email = sc.nextLine(); // Change to nextLine() to read the whole line
 
-            
-                try {
-                	isEmailAndNameValidPersonalized(name, email);
-                	addressInput = formatAddress(addressInput);
-                	address = Long.parseLong(addressInput);  // Try to parse the input as a long
-                    break;  // Break the loop if a valid address is obtained
-                } catch (NumberFormatException e) {
-                    System.out.println("\nInvalid address!");
-                    System.out.println("\nInvalid information. Please enter valid values!");
-                } catch(IllegalArgumentException e) {
-                
-                }
-                System.out.println();
-                if (name.length() <= 2) System.out.println("Invalid name!");
-                if (!email.endsWith("@gmail.com") || email.length() <= 10) System.out.println("Invalid email!");
+			System.out.print("Shipping address (CEP/ZIP code - only integers): ");
+			addressInput = sc.nextLine(); // Change to nextLine() to read the whole line
 
-                System.out.println("\nInvalid information. Please enter valid values!");
+			try {
+				validate(name, email, addressInput);
+				isEmailAndNameValidPersonalized(name, email);
+				addressInput = formatAddress(addressInput);
+				address = Long.parseLong(addressInput); // Try to parse the input as a long
+				break; // Break the loop if a valid address is obtained
+			} catch (NumberFormatException e) {
+				System.out.println("\nInvalid address!");
+				System.out.println("\nInvalid information. Please enter valid values!");
+			} catch (IllegalArgumentException e) {
+				System.out.println();
+				System.out.println(e.getMessage());
+				System.out.println("\nInvalid information. Please enter valid values!");
+			}
 
-            
-        }
+			if (!email.endsWith("@gmail.com") || email.length() <= 10)
+				System.out.println("Invalid email!");
 
-        Customer customer = new Customer(name, email, address, new ShoppingCart());
-        choiceOfMenus(customer);
-    }
 
+		}
+
+		Customer customer = new Customer(name, email, address, new ShoppingCart());
+		choiceOfMenus(customer);
+	}
+
+	private void validate(String name, String email, String addressInput) {
+		if(name.length() <= 2 || name.matches("[\\d]+")) {
+			throw new IllegalArgumentException("Invalid name!");
+		}
+		
+		
+	}
 
 	private String formatAddress(String addressInput) {
 		return addressInput.replaceAll("[^\\d]", "");
 	}
 
-
 	void choiceOfMenus(Customer customer) {
-    	boolean finishProgram = false;
-        while (true) {
-        	
-            menuDisplay();
+		boolean finishProgram = false;
+		while (true) {
 
-            EMenuOption choiceFromEMenuOptions = getMenuChoice();
+			menuDisplay();
 
-            sc.nextLine();
+			EMenuOption choiceFromEMenuOptions = getMenuChoice();
 
-            switch (choiceFromEMenuOptions) {
-                case BROWSE_PRODUCTS -> browseProducts(new Eletronics(), new Books(), new Clothing());
-                case ADD_TO_CART -> addToCart(new Eletronics(), new Books(), new Clothing(), customer);
-                case VIEW_CART -> viewCart(customer);
-                case REMOVE_FROM_CART -> removeItemFromCart(new Eletronics(), new Books(), new Clothing(), customer);
-                case CHECKOUT -> checkout(customer);
-                case EXIT -> finishProgram = exit(); 
-                default -> System.out.println("\nInvalid option. Please try again.");
-            }
-            
-            if(finishProgram) break;
-        }
+			sc.nextLine();
+
+			switch (choiceFromEMenuOptions) {
+			case BROWSE_PRODUCTS -> browseProducts(new Eletronics(), new Books(), new Clothing());
+			case ADD_TO_CART -> addToCart(new Eletronics(), new Books(), new Clothing(), customer);
+			case VIEW_CART -> viewCart(customer);
+			case REMOVE_FROM_CART -> removeItemFromCart(new Eletronics(), new Books(), new Clothing(), customer);
+			case CHECKOUT -> checkout(customer);
+			case EXIT -> finishProgram = exit();
+			default -> System.out.println("\nInvalid option. Please try again.");
+			}
+
+			if (finishProgram)
+				break;
+		}
 	}
 
 	@Override
-    public void browseProducts(Eletronics eletronics, Books book, Clothing clothing) {
+	public void browseProducts(Eletronics eletronics, Books book, Clothing clothing) {
 
 		TerminalView.printAvaibleProduct();
-       
-        String productChoose = sc.next();
-
-        while (!containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose)) {
-        	TerminalView.printChoiceAvailabelProducts(); 
-        	
-        	productChoose = sc.next();
-        }
-
-        System.out.println();
-
-        // Verifying option
-        List<Products> selectedProducts = new ArrayList<>();
-        String categoryName = "";
-
-        switch (productChoose) {
-            case "1" -> {
-                selectedProducts = eletronics.getEletronics();
-                categoryName = "Electronics";
-            }
-            case "2" -> {
-                selectedProducts = clothing.getClothings();
-                categoryName = "Clothing";
-            }
-            case "3" -> {
-                selectedProducts = book.getBooks();
-                categoryName = "Books";
-            }
-            case "4" -> {
-                return;
-            }
-            default -> System.out.println("\nPlease a valid option!");
-        }
-
-        System.out.println("Here are the products in the " + categoryName + " category:\n");
-
-        for (int i = 0; i < selectedProducts.size(); i++) {
-            Products product = selectedProducts.get(i);
-            System.out.println((i + 1) + ". " + product.getName() + " - " + product.getDescription() + " $" + product.getPrice());
-        }
-
-    }
-
-    @Override
-    public void addToCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer) {
-
-        System.out.println();
-        System.out.println("╔═══════════════════════════════╗");
-        System.out.println("║          ADD TO CART          ║");
-        System.out.println("╚═══════════════════════════════╝");
-        System.out.println("\nFrom what category:");
-        System.out.println("1. Electronics");
-        System.out.println("2. Clothing");
-        System.out.println("3. Books");
-        System.out.println("4. Back to menu");
-        System.out.print("Your choice: ");
-        String addOptionProductsfromCategory = sc.next();
-
-        List<Products> productsToSelect;
-
-
-        while (!containsChoice(Arrays.asList("1", "2", "3", "4"), addOptionProductsfromCategory)) {
-
-            System.out.println("\n1. Electronics");
-            System.out.println("2. Clothing");
-            System.out.println("3. Books");
-            System.out.println("4. Back to menu");
-            System.out.print("Please a valid choice: ");
-            addOptionProductsfromCategory = sc.next();
-
-        }
-        switch (addOptionProductsfromCategory) {
-            case "1" -> {
-
-                productsToSelect = eletronics.getEletronics();
-                System.out.println();
-
-                defaultFunctionalityAddToCart(Category.ELETRONICS, customer, eletronics, book, clothing, productsToSelect);
-            }
-            case "2" -> {
 
-                productsToSelect = clothing.getClothings();
-                System.out.println();
+		String productChoose = sc.next();
+
+		while (!containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose)) {
+			TerminalView.printChoiceAvailabelProducts();
+
+			productChoose = sc.next();
+		}
+
+		System.out.println();
+
+		// Verifying option
+		List<Products> selectedProducts = new ArrayList<>();
+		String categoryName = "";
+
+		switch (productChoose) {
+		case "1" -> {
+			selectedProducts = eletronics.getEletronics();
+			categoryName = "Electronics";
+		}
+		case "2" -> {
+			selectedProducts = clothing.getClothings();
+			categoryName = "Clothing";
+		}
+		case "3" -> {
+			selectedProducts = book.getBooks();
+			categoryName = "Books";
+		}
+		case "4" -> {
+			return;
+		}
+		default -> System.out.println("\nPlease a valid option!");
+		}
+
+		System.out.println("Here are the products in the " + categoryName + " category:\n");
+
+		for (int i = 0; i < selectedProducts.size(); i++) {
+			Products product = selectedProducts.get(i);
+			System.out.println(
+					(i + 1) + ". " + product.getName() + " - " + product.getDescription() + " $" + product.getPrice());
+		}
+
+	}
+
+	@Override
+	public void addToCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer) {
+
+		System.out.println();
+		System.out.println("╔═══════════════════════════════╗");
+		System.out.println("║          ADD TO CART          ║");
+		System.out.println("╚═══════════════════════════════╝");
+		System.out.println("\nFrom what category:");
+		System.out.println("1. Electronics");
+		System.out.println("2. Clothing");
+		System.out.println("3. Books");
+		System.out.println("4. Back to menu");
+		System.out.print("Your choice: ");
+		String addOptionProductsfromCategory = sc.next();
+
+		List<Products> productsToSelect;
+
+		while (!containsChoice(Arrays.asList("1", "2", "3", "4"), addOptionProductsfromCategory)) {
+
+			System.out.println("\n1. Electronics");
+			System.out.println("2. Clothing");
+			System.out.println("3. Books");
+			System.out.println("4. Back to menu");
+			System.out.print("Please a valid choice: ");
+			addOptionProductsfromCategory = sc.next();
+
+		}
+		switch (addOptionProductsfromCategory) {
+		case "1" -> {
+
+			productsToSelect = eletronics.getEletronics();
+			System.out.println();
+
+			defaultFunctionalityAddToCart(Category.ELETRONICS, customer, eletronics, book, clothing, productsToSelect);
+		}
+		case "2" -> {
+
+			productsToSelect = clothing.getClothings();
+			System.out.println();
 
-                defaultFunctionalityAddToCart(Category.CLOTHING, customer, eletronics, book, clothing, productsToSelect);
-            }
-            case "3" -> {
+			defaultFunctionalityAddToCart(Category.CLOTHING, customer, eletronics, book, clothing, productsToSelect);
+		}
+		case "3" -> {
 
-                productsToSelect = book.getBooks();
-                System.out.println();
-
-                defaultFunctionalityAddToCart(Category.BOOKS, customer, eletronics, book, clothing, productsToSelect);
-            }
-            default -> System.out.println("Invalid option!");
-        }
-    }
+			productsToSelect = book.getBooks();
+			System.out.println();
 
-    private void defaultFunctionalityAddToCart(Category productToAdd, Customer customer, Eletronics eletronics, Books book, Clothing clothing, List<Products> productsToSelect) {
-
-        int quantity;
-        String optionAddCart;
+			defaultFunctionalityAddToCart(Category.BOOKS, customer, eletronics, book, clothing, productsToSelect);
+		}
+		default -> System.out.println("Invalid option!");
+		}
+	}
 
-        while (true) {
+	private void defaultFunctionalityAddToCart(Category productToAdd, Customer customer, Eletronics eletronics,
+			Books book, Clothing clothing, List<Products> productsToSelect) {
 
-            simplifiedViewProducts(productsToSelect);
+		int quantity;
+		String optionAddCart;
 
-            System.out.print("Your choice to add to cart: ");
-            optionAddCart = sc.next();
+		while (true) {
 
-            if (optionAddCart.equals("4")) return;
+			simplifiedViewProducts(productsToSelect);
 
-            System.out.print("Quantity: ");
-            String quantityInput = sc.next();
+			System.out.print("Your choice to add to cart: ");
+			optionAddCart = sc.next();
 
+			if (optionAddCart.equals("4"))
+				return;
 
-            if (containsChoice(Arrays.asList("1", "2", "3"), optionAddCart)) {
-                try {
+			System.out.print("Quantity: ");
+			String quantityInput = sc.next();
 
-                    quantity = Integer.parseInt(quantityInput);
-                    if (quantity > 0) break;
-                    else throw new NumberFormatException();
+			if (containsChoice(Arrays.asList("1", "2", "3"), optionAddCart)) {
+				try {
 
-                } catch (NumberFormatException e) {
-                    System.out.println("\nPlease enter valid values!");
-                }
-            } else {
-                System.out.println("\nPlease enter valid values!");
-            }
-        }
+					quantity = Integer.parseInt(quantityInput);
+					if (quantity > 0)
+						break;
+					else
+						throw new NumberFormatException();
 
-        if (productToAdd == Category.ELETRONICS)
-            customer.addToShoppingCart(eletronics.getEletronics().get(Integer.parseInt(optionAddCart) - 1), quantity);
-        else if (productToAdd == Category.CLOTHING)
-            customer.addToShoppingCart(clothing.getClothings().get(Integer.parseInt(optionAddCart) - 1), quantity);
-        else if (productToAdd == Category.BOOKS)
-            customer.addToShoppingCart(book.getBooks().get(Integer.parseInt(optionAddCart) - 1), quantity);
+				} catch (NumberFormatException e) {
+					System.out.println("\nPlease enter valid values!");
+				}
+			} else {
+				System.out.println("\nPlease enter valid values!");
+			}
+		}
 
-        System.out.println("\nSuccessfully added!");
+		if (productToAdd == Category.ELETRONICS)
+			customer.addToShoppingCart(eletronics.getEletronics().get(Integer.parseInt(optionAddCart) - 1), quantity);
+		else if (productToAdd == Category.CLOTHING)
+			customer.addToShoppingCart(clothing.getClothings().get(Integer.parseInt(optionAddCart) - 1), quantity);
+		else if (productToAdd == Category.BOOKS)
+			customer.addToShoppingCart(book.getBooks().get(Integer.parseInt(optionAddCart) - 1), quantity);
 
-    }
-    public void simplifiedViewProducts(List<Products> productsToSelect){
+		System.out.println("\nSuccessfully added!");
 
-        for (int i = 0; i < productsToSelect.size(); i++) {
-            Products product = productsToSelect.get(i);
-            System.out.println((i + 1) + ". " + product.getName() + " - $" + product.getPrice());
-        }
-        System.out.println("4. Back to menu");
-    }
-    @Override
-    public void viewCart(Customer customer) {
-        int totalItems = 0;
+	}
 
-        System.out.println();
-        System.out.println("╔═══════════════════════════════╗");
-        System.out.println("║           VIEW CART           ║");
-        System.out.println("╚═══════════════════════════════╝\n");
+	public void simplifiedViewProducts(List<Products> productsToSelect) {
 
-        List<ShoppingCartItems> cartItems = customer.getShoppingCart().getItems();
+		for (int i = 0; i < productsToSelect.size(); i++) {
+			Products product = productsToSelect.get(i);
+			System.out.println((i + 1) + ". " + product.getName() + " - $" + product.getPrice());
+		}
+		System.out.println("4. Back to menu");
+	}
 
-        if (cartItems.isEmpty()) {
-            System.out.println();
-            System.out.println("--- YOUR CAR IS EMPTY! ---");
-            return;
-        }
+	@Override
+	public void viewCart(Customer customer) {
+		int totalItems = 0;
 
-        for (int i = 0; i < customer.getShoppingCart().getItems().size(); i++) {
+		System.out.println();
+		System.out.println("╔═══════════════════════════════╗");
+		System.out.println("║           VIEW CART           ║");
+		System.out.println("╚═══════════════════════════════╝\n");
 
-            ShoppingCartItems cartItem = customer.getShoppingCart().getItems().get(i);
+		List<ShoppingCartItems> cartItems = customer.getShoppingCart().getItems();
 
-            int quantity = cartItem.getQuantity();
-            double itemTotalCost = quantity * cartItem.getProduct().getPrice();
+		if (cartItems.isEmpty()) {
+			System.out.println();
+			System.out.println("--- YOUR CAR IS EMPTY! ---");
+			return;
+		}
 
-            System.out.println((i + 1) + ". " + cartItem.getProduct().getName() + " (Qty: " + quantity + ") - $" + String.format("%.2f", itemTotalCost));
-            totalItems += quantity;
+		for (int i = 0; i < customer.getShoppingCart().getItems().size(); i++) {
 
-        }
+			ShoppingCartItems cartItem = customer.getShoppingCart().getItems().get(i);
 
-        double totalCost = customer.getShoppingCart().totalCost();
+			int quantity = cartItem.getQuantity();
+			double itemTotalCost = quantity * cartItem.getProduct().getPrice();
 
-        System.out.println("\nTotal Items: " + totalItems);
-        System.out.println("Total Cost: $" + String.format("%.2f", totalCost));
+			System.out.println((i + 1) + ". " + cartItem.getProduct().getName() + " (Qty: " + quantity + ") - $"
+					+ String.format("%.2f", itemTotalCost));
+			totalItems += quantity;
 
-    }
-    @Override
-    public void removeItemFromCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer) {
+		}
 
-        System.out.println();
-        System.out.println("╔═══════════════════════════════╗");
-        System.out.println("║           REMOVE ITEM         ║");
-        System.out.println("╚═══════════════════════════════╝\n");
+		double totalCost = customer.getShoppingCart().totalCost();
 
-        List<ShoppingCartItems> cartItems = customer.getShoppingCart().getItems();
+		System.out.println("\nTotal Items: " + totalItems);
+		System.out.println("Total Cost: $" + String.format("%.2f", totalCost));
 
-        // will print the message and return to menu
-        if (cartItems.isEmpty()) {
-            System.out.println("\n--- YOUR CAR IS EMPTY! ---");
-            return;
-        }
+	}
 
-        // To view all products
-        simplifiedViewShoppingCartItems(cartItems);
+	@Override
+	public void removeItemFromCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer) {
 
-        List<String> arrayContainsChoice = new LinkedList<>();
-        for (int i = 1; i <= cartItems.size(); i++){
-            arrayContainsChoice.add(Integer.toString(i));
-        }
+		System.out.println();
+		System.out.println("╔═══════════════════════════════╗");
+		System.out.println("║           REMOVE ITEM         ║");
+		System.out.println("╚═══════════════════════════════╝\n");
 
-        while (true){
+		List<ShoppingCartItems> cartItems = customer.getShoppingCart().getItems();
 
-            System.out.print("Choice to remove: ");
-            String choice = sc.next();
+		// will print the message and return to menu
+		if (cartItems.isEmpty()) {
+			System.out.println("\n--- YOUR CAR IS EMPTY! ---");
+			return;
+		}
 
-            if (choice.equals(Integer.toString(cartItems.size() + 1))) return;
+		// To view all products
+		simplifiedViewShoppingCartItems(cartItems);
 
-            System.out.print("Quantity to remove: ");
-            String quantityToRemoveInput = sc.next();
+		List<String> arrayContainsChoice = new LinkedList<>();
+		for (int i = 1; i <= cartItems.size(); i++) {
+			arrayContainsChoice.add(Integer.toString(i));
+		}
 
-            int quantityToRemove;
+		while (true) {
 
-            if (containsChoice(arrayContainsChoice, choice)){
+			System.out.print("Choice to remove: ");
+			String choice = sc.next();
 
-                try{
-                    quantityToRemove = Integer.parseInt(quantityToRemoveInput);
+			if (choice.equals(Integer.toString(cartItems.size() + 1)))
+				return;
 
-                    ShoppingCartItems itemToRemove = customer.getShoppingCart().getItems().get(Integer.parseInt(choice) - 1);
+			System.out.print("Quantity to remove: ");
+			String quantityToRemoveInput = sc.next();
 
-                    if (quantityToRemove == itemToRemove.getQuantity()){
+			int quantityToRemove;
 
-                        customer.getShoppingCart().removeEntireProduct(itemToRemove);
+			if (containsChoice(arrayContainsChoice, choice)) {
 
-                    }else if(quantityToRemove < itemToRemove.getQuantity() && quantityToRemove > 0){
+				try {
+					quantityToRemove = Integer.parseInt(quantityToRemoveInput);
 
-                        itemToRemove.decrementQuantity(quantityToRemove);
+					ShoppingCartItems itemToRemove = customer.getShoppingCart().getItems()
+							.get(Integer.parseInt(choice) - 1);
 
-                    }else{
-                        throw new DomainException("\nInvalid quantity!\n");
-                    }
-                    break;
+					if (quantityToRemove == itemToRemove.getQuantity()) {
 
-                }catch (NumberFormatException | DomainException e){
+						customer.getShoppingCart().removeEntireProduct(itemToRemove);
 
-                    if (e instanceof DomainException) System.out.println(e.getMessage());
-                    else System.out.println("\nInvalid option!\n");
+					} else if (quantityToRemove < itemToRemove.getQuantity() && quantityToRemove > 0) {
 
-                    //to view shopping cart products
-                    simplifiedViewShoppingCartItems(cartItems);
-                }
+						itemToRemove.decrementQuantity(quantityToRemove);
 
-            }else { // if does not match any option
+					} else {
+						throw new DomainException("\nInvalid quantity!\n");
+					}
+					break;
 
-                System.out.println("\nInvalid option!\n");
-                simplifiedViewShoppingCartItems(cartItems);
+				} catch (NumberFormatException | DomainException e) {
 
-            }
-        }
-    }
-    private void simplifiedViewShoppingCartItems(List<ShoppingCartItems> shoppingCartItemsList){
-        for (int i = 0; i < shoppingCartItemsList.size(); i++) {
+					if (e instanceof DomainException)
+						System.out.println(e.getMessage());
+					else
+						System.out.println("\nInvalid option!\n");
 
-            String nameItem = shoppingCartItemsList.get(i).getProduct().getName();
-            int itemQuantity = shoppingCartItemsList.get(i).getQuantity();
+					// to view shopping cart products
+					simplifiedViewShoppingCartItems(cartItems);
+				}
 
-            System.out.println((i + 1) + ". " + nameItem + " (Qty: " + itemQuantity + ")");
-        }
-        System.out.println((shoppingCartItemsList.size() + 1) + ". Back to menu");
-    }
+			} else { // if does not match any option
 
-    @Override
-    public void checkout(Customer customer){
+				System.out.println("\nInvalid option!\n");
+				simplifiedViewShoppingCartItems(cartItems);
 
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+			}
+		}
+	}
 
-        List<ShoppingCartItems> shoppingCartItemsList = customer.getShoppingCart().getItems();
+	private void simplifiedViewShoppingCartItems(List<ShoppingCartItems> shoppingCartItemsList) {
+		for (int i = 0; i < shoppingCartItemsList.size(); i++) {
 
-        if (shoppingCartItemsList.isEmpty()){
-            System.out.println("\n--- YOUR ORDER IS EMPTY! ---");
-            return;
-        }
+			String nameItem = shoppingCartItemsList.get(i).getProduct().getName();
+			int itemQuantity = shoppingCartItemsList.get(i).getQuantity();
 
-        Double totalCostOrder = customer.getShoppingCart().totalCost();
+			System.out.println((i + 1) + ". " + nameItem + " (Qty: " + itemQuantity + ")");
+		}
+		System.out.println((shoppingCartItemsList.size() + 1) + ". Back to menu");
+	}
 
-        Order order = new Order(shoppingCartItemsList, customer, LocalDateTime.now(), totalCostOrder);
+	@Override
+	public void checkout(Customer customer) {
 
-        List<ShoppingCartItems> orderCostumerItems = order.getCustomer().getShoppingCart().getItems();
-        int totalItems = 0;
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-        System.out.println("╔═══════════════════════════════╗");
-        System.out.println("║            CHECKOUT           ║");
-        System.out.println("╚═══════════════════════════════╝");
-        System.out.println("\nYour order summary:");
+		List<ShoppingCartItems> shoppingCartItemsList = customer.getShoppingCart().getItems();
 
-        for (int i = 0; i < orderCostumerItems.size(); i++) {
+		if (shoppingCartItemsList.isEmpty()) {
+			System.out.println("\n--- YOUR ORDER IS EMPTY! ---");
+			return;
+		}
 
-            Double price = orderCostumerItems.get(i).getProduct().getPrice() * orderCostumerItems.get(i).getQuantity();
-            int quantity = orderCostumerItems.get(i).getQuantity();
-            System.out.println((i + 1) + ". " + orderCostumerItems.get(i).getProduct().getName() + "(Qty: " + quantity + ")" + " - $" + String.format("%.2f", price));
+		Double totalCostOrder = customer.getShoppingCart().totalCost();
 
-            totalItems += quantity;
-        }
+		Order order = new Order(shoppingCartItemsList, customer, LocalDateTime.now(), totalCostOrder);
 
-        String formatDate = order.getOrderDate().format(df);
+		List<ShoppingCartItems> orderCostumerItems = order.getCustomer().getShoppingCart().getItems();
+		int totalItems = 0;
 
-        System.out.println("\nTotal Items: " + totalItems);
-        System.out.println("Order at: " + formatDate);
-        System.out.println("Total Different Items: " + orderCostumerItems.size());
-        System.out.println("Total Cost: $" + String.format("%.2f", order.getOrderTotal()));
+		System.out.println("╔═══════════════════════════════╗");
+		System.out.println("║            CHECKOUT           ║");
+		System.out.println("╚═══════════════════════════════╝");
+		System.out.println("\nYour order summary:");
 
-        String orderName = order.getCustomer().getName();
-        String orderNameCapitalized = orderName.substring(0, 1).toUpperCase() + orderName.substring(1);
-        String orderEmail = order.getCustomer().getEmail();
-        long orderShippingAddress = order.getCustomer().getShippingAddress();
+		for (int i = 0; i < orderCostumerItems.size(); i++) {
 
-        System.out.println("\nShipping address:");
-        System.out.println("Name: " + orderNameCapitalized);
-        System.out.println("Email: "+ orderEmail);
-        System.out.println("Shipping address: " + orderShippingAddress);
+			Double price = orderCostumerItems.get(i).getProduct().getPrice() * orderCostumerItems.get(i).getQuantity();
+			int quantity = orderCostumerItems.get(i).getQuantity();
+			System.out.println((i + 1) + ". " + orderCostumerItems.get(i).getProduct().getName() + "(Qty: " + quantity
+					+ ")" + " - $" + String.format("%.2f", price));
 
-        System.out.println("\nSelect Payment Method:");
+			totalItems += quantity;
+		}
 
-        System.out.println("1. Credit Card");
-        System.out.println("2. Bank transfer");
-        System.out.println("3. Pix");
-        System.out.println("4. Bitcoin");
+		String formatDate = order.getOrderDate().format(df);
 
-        EPaymentMethod paymentMethodChoice = getPaymentChoice();
+		System.out.println("\nTotal Items: " + totalItems);
+		System.out.println("Order at: " + formatDate);
+		System.out.println("Total Different Items: " + orderCostumerItems.size());
+		System.out.println("Total Cost: $" + String.format("%.2f", order.getOrderTotal()));
 
-        IPaymentMethod paymentMethod = new ShoppingSystem();
+		String orderName = order.getCustomer().getName();
+		String orderNameCapitalized = orderName.substring(0, 1).toUpperCase() + orderName.substring(1);
+		String orderEmail = order.getCustomer().getEmail();
+		long orderShippingAddress = order.getCustomer().getShippingAddress();
 
-        switch (paymentMethodChoice){
-            case CREDITCARD -> paymentMethod.creditCard(totalCostOrder);
-            case BANKTRANSFER -> paymentMethod.bankTransfer(totalCostOrder);
-            case PIX -> paymentMethod.pix(totalCostOrder);
-            case BITCOIN -> paymentMethod.bitcoin(totalCostOrder);
-            case EXCEPTIONS -> {
-                System.out.println("\nInvalid option. Please try again!");
-                return;
-            }
+		System.out.println("\nShipping address:");
+		System.out.println("Name: " + orderNameCapitalized);
+		System.out.println("Email: " + orderEmail);
+		System.out.println("Shipping address: " + orderShippingAddress);
 
-        }
+		System.out.println("\nSelect Payment Method:");
 
-        orderCostumerItems.clear();
-    }
+		System.out.println("1. Credit Card");
+		System.out.println("2. Bank transfer");
+		System.out.println("3. Pix");
+		System.out.println("4. Bitcoin");
 
-    @Override
-    public boolean exit() {
-        System.out.println();
-        System.out.println("    ╔═══════════════════════════════╗");
-        System.out.println("    ║                               ║");
-        System.out.println("    ║  THANKS FOR USING OUR SYSTEM! ║");
-        System.out.println("    ║                               ║");
-        System.out.println("    ╚═══════════════════════════════╝");
-        return true;
-    }
+		EPaymentMethod paymentMethodChoice = getPaymentChoice();
 
-    @Override
-    public void menuDisplay() {
-        System.out.println("════════════════════════════════════");
-        System.out.println("\nMain menu:");
-        System.out.println("1. Browse Products");
-        System.out.println("2. Add to cart");
-        System.out.println("3. View cart");
-        System.out.println("4. Remove from cart");
-        System.out.println("5. Checkout");
-        System.out.println("6. Exit");
+		IPaymentMethod paymentMethod = new ShoppingSystem();
 
-    }
+		switch (paymentMethodChoice) {
+		case CREDITCARD -> paymentMethod.creditCard(totalCostOrder);
+		case BANKTRANSFER -> paymentMethod.bankTransfer(totalCostOrder);
+		case PIX -> paymentMethod.pix(totalCostOrder);
+		case BITCOIN -> paymentMethod.bitcoin(totalCostOrder);
+		case EXCEPTIONS -> {
+			System.out.println("\nInvalid option. Please try again!");
+			return;
+		}
 
-    public EMenuOption getMenuChoice() {
+		}
 
-        System.out.print("Your choice: ");
-        String choice = sc.next();
+		orderCostumerItems.clear();
+	}
 
-        if (!containsChoice(Arrays.asList("1", "2", "3", "4", "5", "6"), choice)) return EMenuOption.EXCEPTIONS;
+	@Override
+	public boolean exit() {
+		System.out.println();
+		System.out.println("    ╔═══════════════════════════════╗");
+		System.out.println("    ║                               ║");
+		System.out.println("    ║  THANKS FOR USING OUR SYSTEM! ║");
+		System.out.println("    ║                               ║");
+		System.out.println("    ╚═══════════════════════════════╝");
+		return true;
+	}
 
-        // if "choice" in options
-        return EMenuOption.values()[Integer.parseInt(choice) - 1];
-    }
-    public EPaymentMethod getPaymentChoice(){
-        System.out.print("Please choose an option: ");
-        String choice = sc.next();
+	@Override
+	public void menuDisplay() {
+		System.out.println("════════════════════════════════════");
+		System.out.println("\nMain menu:");
+		System.out.println("1. Browse Products");
+		System.out.println("2. Add to cart");
+		System.out.println("3. View cart");
+		System.out.println("4. Remove from cart");
+		System.out.println("5. Checkout");
+		System.out.println("6. Exit");
 
-        if (!containsChoice(Arrays.asList("1", "2", "3", "4", "5"), choice)) return EPaymentMethod.EXCEPTIONS;
+	}
 
-        // if "choice" in options
-        return EPaymentMethod.values()[Integer.parseInt(choice) - 1];
-    }
+	public EMenuOption getMenuChoice() {
 
-    public boolean containsChoice(List<String> options, String choice) {
-        return options.contains(choice);
-    }
+		System.out.print("Your choice: ");
+		String choice = sc.next();
 
-    @Override
-    public boolean isEmailAndNameValidPersonalized(String name, String email) {
-        return name.length() > 2 && email.endsWith("@gmail.com") && email.length() > 10;
-    }
+		if (!containsChoice(Arrays.asList("1", "2", "3", "4", "5", "6"), choice))
+			return EMenuOption.EXCEPTIONS;
+
+		// if "choice" in options
+		return EMenuOption.values()[Integer.parseInt(choice) - 1];
+	}
+
+	public EPaymentMethod getPaymentChoice() {
+		System.out.print("Please choose an option: ");
+		String choice = sc.next();
+
+		if (!containsChoice(Arrays.asList("1", "2", "3", "4", "5"), choice))
+			return EPaymentMethod.EXCEPTIONS;
+
+		// if "choice" in options
+		return EPaymentMethod.values()[Integer.parseInt(choice) - 1];
+	}
+
+	public boolean containsChoice(List<String> options, String choice) {
+		return options.contains(choice);
+	}
+
+	@Override
+	public boolean isEmailAndNameValidPersonalized(String name, String email) {
+		return name.length() > 2 && email.endsWith("@gmail.com") && email.length() > 10;
+	}
 }
