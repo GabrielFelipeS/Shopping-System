@@ -12,7 +12,7 @@ public interface IShoppingSystem {
     void viewCart(Customer customer);
     void removeItemFromCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer);
     void checkout(Customer customer);
-    void exit();
+    boolean exit();
     void menuDisplay();
     boolean isEmailAndNameValidPersonalized(String name, String email);
 }

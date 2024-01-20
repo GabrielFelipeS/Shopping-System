@@ -19,14 +19,9 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
     @Override
     public void run(){
 
-        System.out.println();
-        System.out.println("    ╔═══════════════════════════════╗");
-        System.out.println("    ║                               ║");
-        System.out.println("    ║   WELCOME TO SHOPPING SYSTEM  ║");
-        System.out.println("    ║                               ║");
-        System.out.println("    ╚═══════════════════════════════╝");
-
-        System.out.println("\n-- To create a personalized cart for you, we need you sign up --\n");
+    	printMenu();
+    	
+    	System.out.println("\n-- To create a personalized cart for you, we need you sign up --\n");
 
         String name, email, addressInput;
         long address;
@@ -60,9 +55,22 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
         }
 
         Customer customer = new Customer(name, email, address, new ShoppingCart());
+        choiceOfMenus(customer);
+    }
 
+    private void printMenu() {
+        System.out.println();
+        System.out.println("    ╔═══════════════════════════════╗");
+        System.out.println("    ║                               ║");
+        System.out.println("    ║   WELCOME TO SHOPPING SYSTEM  ║");
+        System.out.println("    ║                               ║");
+        System.out.println("    ╚═══════════════════════════════╝");
+	}
+
+	void choiceOfMenus(Customer customer) {
+    	boolean finishProgram = false;
         while (true) {
-
+        	
             menuDisplay();
 
             EMenuOption choiceFromEMenuOptions = getMenuChoice();
@@ -75,13 +83,15 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
                 case VIEW_CART -> viewCart(customer);
                 case REMOVE_FROM_CART -> removeItemFromCart(new Eletronics(), new Books(), new Clothing(), customer);
                 case CHECKOUT -> checkout(customer);
-                case EXIT -> exit();
+                case EXIT -> finishProgram = exit(); 
                 default -> System.out.println("\nInvalid option. Please try again.");
             }
+            
+            if(finishProgram) break;
         }
-    }
+	}
 
-    @Override
+	@Override
     public void browseProducts(Eletronics eletronics, Books book, Clothing clothing) {
 
         System.out.println();
@@ -443,14 +453,14 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
     }
 
     @Override
-    public void exit() {
+    public boolean exit() {
         System.out.println();
         System.out.println("    ╔═══════════════════════════════╗");
         System.out.println("    ║                               ║");
         System.out.println("    ║  THANKS FOR USING OUR SYSTEM! ║");
         System.out.println("    ║                               ║");
         System.out.println("    ╚═══════════════════════════════╝");
-        System.exit(0);
+        return true;
     }
 
     @Override
