@@ -1,5 +1,10 @@
 package com.br.onlineshoppingsystem.view;
 
+import java.util.List;
+
+import com.br.onlineshoppingsystem.entities.ProductChooseStrategy;
+import com.br.onlineshoppingsystem.entities.Products;
+
 public class TerminalView {
 	public static void printWelcome() {
 		System.out.println();
@@ -25,10 +30,13 @@ public class TerminalView {
 	}
 
 	public static void printChoiceAvailabelProducts() {
-		System.out.println("1. Electronics");
-		System.out.println("2. Clothing");
-		System.out.println("3. Books");
-		System.out.println("4. Back to menu");
+		var pcs = ProductChooseStrategy.values();
+		int i;
+		for(i = 1;i <= pcs.length; i++) {
+			System.out.printf("%d. %s\n", i, ProductChooseStrategy.getProductsByCategoryDTOBy(i).categoryName());
+		}
+		
+		System.out.printf("%d. Back to menu\n", i);
 		System.out.print("Please choose a category to view its products or back to menu: ");
 	}
 
@@ -50,5 +58,14 @@ public class TerminalView {
 		System.out.println("    ║  THANKS FOR USING OUR SYSTEM! ║");
 		System.out.println("    ║                               ║");
 		System.out.println("    ╚═══════════════════════════════╝");
+	}
+
+	public static void simplifiedViewProducts(List<Products> productsToSelect) {
+		for (int i = 0; i < productsToSelect.size(); i++) {
+			Products product = productsToSelect.get(i);
+			System.out.println((i + 1) + ". " + product);
+		}
+		System.out.println("4. Back to menu");
+
 	}
 }

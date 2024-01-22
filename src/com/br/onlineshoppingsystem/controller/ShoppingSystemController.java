@@ -88,22 +88,17 @@ public class ShoppingSystemController implements IPaymentMethod {
 	}
 
 	public void addToCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer) {
-
 		TerminalView.printToAddCart();
 		System.out.println("\nFrom what category:");
 		TerminalView.printChoiceAvailabelProducts();
 		System.out.print("Your choice: ");
-
-
-		List<Products> productsToSelect;
-
 		
 		String addOptionProductsfromCategory;
 		do {
 			TerminalView.printChoiceAvailabelProducts();
 			addOptionProductsfromCategory = sc.next();
 
-		} while (!ShoppingSystemService.containsChoice(Arrays.asList("1", "2", "3", "4"), addOptionProductsfromCategory));
+		} while (!ShoppingSystemService.containsChoice(addOptionProductsfromCategory));
 
 		ProductsByCategoryDTO productsByCategory = ProductChooseStrategy.getProductsByCategoryDTOBy(addOptionProductsfromCategory);
 		
@@ -118,7 +113,7 @@ public class ShoppingSystemController implements IPaymentMethod {
 
 		while (true) {
 
-			simplifiedViewProducts(productsToSelect);
+			TerminalView.simplifiedViewProducts(productsToSelect);
 
 			System.out.print("Your choice to add to cart: ");
 			optionAddCart = sc.next();
@@ -129,7 +124,7 @@ public class ShoppingSystemController implements IPaymentMethod {
 			System.out.print("Quantity: ");
 			String quantityInput = sc.next();
 
-			if (containsChoice(Arrays.asList("1", "2", "3"), optionAddCart)) {
+			if (ShoppingSystemService.containsChoice(Arrays.asList("1", "2", "3"), optionAddCart)) {
 				try {
 
 					quantity = Integer.parseInt(quantityInput);
@@ -146,25 +141,15 @@ public class ShoppingSystemController implements IPaymentMethod {
 			}
 		}
 
-		if (productToAdd == Category.ELETRONICS)
-			customer.addToShoppingCart(eletronics.getEletronics().get(Integer.parseInt(optionAddCart) - 1), quantity);
-		else if (productToAdd == Category.CLOTHING)
-			customer.addToShoppingCart(clothing.getClothings().get(Integer.parseInt(optionAddCart) - 1), quantity);
-		else if (productToAdd == Category.BOOKS)
-			customer.addToShoppingCart(book.getBooks().get(Integer.parseInt(optionAddCart) - 1), quantity);
-
+		var pcs = ProductChooseStrategy.valueOf(productToAdd.toString()).getProductsByCategoryDTO();
+		
+		customer.addToShoppingCart(pcs.get(Integer.parseInt(optionAddCart) - 1), quantity);
+		
 		System.out.println("\nSuccessfully added!");
 
 	}
 
-	public void simplifiedViewProducts(List<Products> productsToSelect) {
 
-		for (int i = 0; i < productsToSelect.size(); i++) {
-			Products product = productsToSelect.get(i);
-			System.out.println((i + 1) + ". " + product.getName() + " - $" + product.getPrice());
-		}
-		System.out.println("4. Back to menu");
-	}
 
 	public void viewCart(Customer customer) {
 		int totalItems = 0;
