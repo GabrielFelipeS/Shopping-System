@@ -34,4 +34,8 @@ public class Customer {
     public void addToShoppingCart(Products product, int quantity){
         shoppingCart.addItem(product, quantity);
     }
+    
+    public String toString() {
+    	return getName() + " " + getEmail() + " " + getShippingAddress();
+    }
 }

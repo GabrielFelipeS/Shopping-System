@@ -36,4 +36,8 @@ public class Products {
     public Category getCategory() {
         return category;
     }
+    
+    public String toString() {
+    	return String.format("%s - %s $.2f", this.getName(), this.getDescription(), this.getPrice());
+    }
 }
