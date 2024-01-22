@@ -10,6 +10,7 @@ import com.br.onlineshoppingsystem.entities.categories.Books;
 import com.br.onlineshoppingsystem.entities.categories.Category;
 import com.br.onlineshoppingsystem.entities.categories.Clothing;
 import com.br.onlineshoppingsystem.entities.categories.Eletronics;
+import com.br.onlineshoppingsystem.Service.ShoppingSystemService;
 import com.br.onlineshoppingsystem.domain.Customer;
 import com.br.onlineshoppingsystem.entities.paymentMethod.EPaymentMethod;
 import com.br.onlineshoppingsystem.entities.paymentMethod.IPaymentMethod;
@@ -20,16 +21,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod {
+public class ShoppingSystemController implements IPaymentMethod {
 	private static Scanner sc = SingletonScanner.getInstence();
 
-	@Override
+	public static boolean containsChoice(List<String> options, String choice) {
+		return options.contains(choice);
+	}
+	
 	public void run() {
 		TerminalView.printWelcome();
 
 		System.out.println("\n-- To create a personalized cart for you, we need you sign up --\n");
 
 		Customer customer = CustomerController.enterCustomerInformation();
+
 		choiceOfMenus(customer);
 	}
 
@@ -37,20 +42,18 @@ public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod
 		boolean finishProgram = false;
 		while (true) {
 
-			menuDisplay();
+			TerminalView.menuDisplay();
 
 			EMenuOption choiceFromEMenuOptions = getMenuChoice();
 
-			//sc.nextLine();
-
 			switch (choiceFromEMenuOptions) {
-				case BROWSE_PRODUCTS -> browseProducts(new Eletronics(), new Books(), new Clothing());
-				case ADD_TO_CART -> addToCart(new Eletronics(), new Books(), new Clothing(), customer);
-				case VIEW_CART -> viewCart(customer);
-				case REMOVE_FROM_CART -> removeItemFromCart(new Eletronics(), new Books(), new Clothing(), customer);
-				case CHECKOUT -> checkout(customer);
-				case EXIT -> finishProgram = exit();
-				default -> System.out.println("\nInvalid option. Please try again.");
+			case BROWSE_PRODUCTS -> browseProducts(new Eletronics(), new Books(), new Clothing());
+			case ADD_TO_CART -> addToCart(new Eletronics(), new Books(), new Clothing(), customer);
+			case VIEW_CART -> viewCart(customer);
+			case REMOVE_FROM_CART -> removeItemFromCart(new Eletronics(), new Books(), new Clothing(), customer);
+			case CHECKOUT -> checkout(customer);
+			case EXIT -> finishProgram = ShoppingSystemService.exit();
+			default -> System.out.println("\nInvalid option. Please try again.");
 			}
 
 			if (finishProgram)
@@ -58,7 +61,6 @@ public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod
 		}
 	}
 
-	@Override
 	public void browseProducts(Eletronics eletronics, Books book, Clothing clothing) {
 
 		TerminalView.printAvaibleProduct();
@@ -67,7 +69,8 @@ public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod
 		do {
 			TerminalView.printChoiceAvailabelProducts();
 			productChoose = sc.next();
-		} while(!containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose));
+
+		} while (!ShoppingSystemService.containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose));
 
 		System.out.println();
 
@@ -103,33 +106,26 @@ public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod
 
 	}
 
-	@Override
 	public void addToCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer) {
 
-		System.out.println();
-		System.out.println("╔═══════════════════════════════╗");
-		System.out.println("║          ADD TO CART          ║");
-		System.out.println("╚═══════════════════════════════╝");
+		TerminalView.printToAddCart();
 		System.out.println("\nFrom what category:");
-		System.out.println("1. Electronics");
-		System.out.println("2. Clothing");
-		System.out.println("3. Books");
-		System.out.println("4. Back to menu");
+		TerminalView.printChoiceAvailabelProducts();
 		System.out.print("Your choice: ");
+
 		String addOptionProductsfromCategory = sc.next();
 
 		List<Products> productsToSelect;
 
-		while (!containsChoice(Arrays.asList("1", "2", "3", "4"), addOptionProductsfromCategory)) {
+		while (!ShoppingSystemService
+				.containsChoice(Arrays.asList("1", "2", "3", "4"), addOptionProductsfromCategory)) {
+			
+			TerminalView.printChoiceAvailabelProducts();
 
-			System.out.println("\n1. Electronics");
-			System.out.println("2. Clothing");
-			System.out.println("3. Books");
-			System.out.println("4. Back to menu");
 			System.out.print("Please a valid choice: ");
 			addOptionProductsfromCategory = sc.next();
-
 		}
+		
 		switch (addOptionProductsfromCategory) {
 		case "1" -> {
 
@@ -212,7 +208,6 @@ public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod
 		System.out.println("4. Back to menu");
 	}
 
-	@Override
 	public void viewCart(Customer customer) {
 		int totalItems = 0;
 
@@ -249,7 +244,6 @@ public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod
 
 	}
 
-	@Override
 	public void removeItemFromCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer) {
 
 		System.out.println();
@@ -338,7 +332,6 @@ public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod
 		System.out.println((shoppingCartItemsList.size() + 1) + ". Back to menu");
 	}
 
-	@Override
 	public void checkout(Customer customer) {
 
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -415,56 +408,20 @@ public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod
 		orderCostumerItems.clear();
 	}
 
-	@Override
-	public boolean exit() {
-		System.out.println();
-		System.out.println("    ╔═══════════════════════════════╗");
-		System.out.println("    ║                               ║");
-		System.out.println("    ║  THANKS FOR USING OUR SYSTEM! ║");
-		System.out.println("    ║                               ║");
-		System.out.println("    ╚═══════════════════════════════╝");
-		return true;
-	}
-
-	@Override
-	public void menuDisplay() {
-		System.out.println("════════════════════════════════════");
-		System.out.println("\nMain menu:");
-		System.out.println("1. Browse Products");
-		System.out.println("2. Add to cart");
-		System.out.println("3. View cart");
-		System.out.println("4. Remove from cart");
-		System.out.println("5. Checkout");
-		System.out.println("6. Exit");
-
-	}
-
 	public EMenuOption getMenuChoice() {
 
 		System.out.print("Your choice: ");
 		String choice = sc.next();
 		System.err.println(choice);
-		
-		
-		if (!containsChoice(Arrays.asList("1", "2", "3", "4", "5", "6"), choice))
-			return EMenuOption.EXCEPTIONS;
+		sc.nextLine();
 
-		// if "choice" in options
-		return EMenuOption.values()[Integer.parseInt(choice) - 1];
+		return ShoppingSystemService.getMenuChoice(choice);
 	}
 
 	public EPaymentMethod getPaymentChoice() {
 		System.out.print("Please choose an option: ");
 		String choice = sc.next();
 
-		if (!containsChoice(Arrays.asList("1", "2", "3", "4", "5"), choice))
-			return EPaymentMethod.EXCEPTIONS;
-
-		// if "choice" in options
-		return EPaymentMethod.values()[Integer.parseInt(choice) - 1];
-	}
-
-	public boolean containsChoice(List<String> options, String choice) {
-		return options.contains(choice);
+		return ShoppingSystemService.getPaymentChoice(choice);
 	}
 }
