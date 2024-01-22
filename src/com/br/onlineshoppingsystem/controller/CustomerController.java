@@ -22,7 +22,12 @@ public class CustomerController {
 	
 		return CustomerService.createCustomer(name, email, addressInput);
 	}
-
+		
+		
+	public static String scanString(String message) {
+		return scanString(message, (s) ->  {} );
+	}
+	
 	public static String scanString(String message, Consumer<String> valid) {
 		String s;
 		while (true) {
@@ -39,6 +44,8 @@ public class CustomerController {
 			}
 		}
 	}
+	
+	
 
 	
 

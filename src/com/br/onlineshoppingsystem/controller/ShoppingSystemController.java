@@ -1,28 +1,31 @@
 package com.br.onlineshoppingsystem.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
+
+import com.br.onlineshoppingsystem.Service.ShoppingSystemService;
+import com.br.onlineshoppingsystem.domain.Customer;
 import com.br.onlineshoppingsystem.entities.EMenuOption;
-import com.br.onlineshoppingsystem.entities.IShoppingSystem;
 import com.br.onlineshoppingsystem.entities.Order;
+import com.br.onlineshoppingsystem.entities.ProductChooseStrategy;
 import com.br.onlineshoppingsystem.entities.Products;
 import com.br.onlineshoppingsystem.entities.ShoppingCartItems;
-import com.br.onlineshoppingsystem.entities.Singletons.SingletonScanner;
+import com.br.onlineshoppingsystem.entities.DTO.ProductsByCategoryDTO;
 import com.br.onlineshoppingsystem.entities.categories.Books;
 import com.br.onlineshoppingsystem.entities.categories.Category;
 import com.br.onlineshoppingsystem.entities.categories.Clothing;
 import com.br.onlineshoppingsystem.entities.categories.Eletronics;
-import com.br.onlineshoppingsystem.Service.ShoppingSystemService;
-import com.br.onlineshoppingsystem.domain.Customer;
 import com.br.onlineshoppingsystem.entities.paymentMethod.EPaymentMethod;
 import com.br.onlineshoppingsystem.entities.paymentMethod.IPaymentMethod;
 import com.br.onlineshoppingsystem.exceptions.DomainException;
 import com.br.onlineshoppingsystem.view.TerminalView;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-
 public class ShoppingSystemController implements IPaymentMethod {
-	private static Scanner sc = SingletonScanner.getInstence();
+	private Scanner sc = new Scanner(System.in);
 
 	public static boolean containsChoice(List<String> options, String choice) {
 		return options.contains(choice);
@@ -72,35 +75,13 @@ public class ShoppingSystemController implements IPaymentMethod {
 
 		} while (!ShoppingSystemService.containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose));
 
-		System.out.println();
+		ProductsByCategoryDTO productsByCategory = ProductChooseStrategy.getProductsByCategoryDTOBy(productChoose);
 
-		// Verifying option
-		List<Products> selectedProducts = new ArrayList<>();
-		String categoryName = "";
-
-		switch (productChoose) {
-		case "1" -> {
-			selectedProducts = eletronics.getEletronics();
-			categoryName = "Electronics";
-		}
-		case "2" -> {
-			selectedProducts = clothing.getClothings();
-			categoryName = "Clothing";
-		}
-		case "3" -> {
-			selectedProducts = book.getBooks();
-			categoryName = "Books";
-		}
-		case "4" -> {
-			return;
-		}
-		default -> System.out.println("\nPlease a valid option!");
-		}
-
-		System.out.println("Here are the products in the " + categoryName + " category:\n");
-
-		for (int i = 0; i < selectedProducts.size(); i++) {
-			Products product = selectedProducts.get(i);
+		System.out.println("\nHere are the products in the " + productsByCategory.categoryName() + " category:\n");
+		
+		int tam = productsByCategory.size();
+		for (int i = 0; i < tam; i++) {
+			Products product = productsByCategory.get(i);
 			System.out.println((i + 1) + ". " + product);
 		}
 
@@ -113,43 +94,20 @@ public class ShoppingSystemController implements IPaymentMethod {
 		TerminalView.printChoiceAvailabelProducts();
 		System.out.print("Your choice: ");
 
-		String addOptionProductsfromCategory = sc.next();
 
 		List<Products> productsToSelect;
 
-		while (!ShoppingSystemService
-				.containsChoice(Arrays.asList("1", "2", "3", "4"), addOptionProductsfromCategory)) {
-			
-			TerminalView.printChoiceAvailabelProducts();
-
-			System.out.print("Please a valid choice: ");
-			addOptionProductsfromCategory = sc.next();
-		}
 		
-		switch (addOptionProductsfromCategory) {
-		case "1" -> {
+		String addOptionProductsfromCategory;
+		do {
+			TerminalView.printChoiceAvailabelProducts();
+			addOptionProductsfromCategory = sc.next();
 
-			productsToSelect = eletronics.getEletronics();
-			System.out.println();
+		} while (!ShoppingSystemService.containsChoice(Arrays.asList("1", "2", "3", "4"), addOptionProductsfromCategory));
 
-			defaultFunctionalityAddToCart(Category.ELETRONICS, customer, eletronics, book, clothing, productsToSelect);
-		}
-		case "2" -> {
-
-			productsToSelect = clothing.getClothings();
-			System.out.println();
-
-			defaultFunctionalityAddToCart(Category.CLOTHING, customer, eletronics, book, clothing, productsToSelect);
-		}
-		case "3" -> {
-
-			productsToSelect = book.getBooks();
-			System.out.println();
-
-			defaultFunctionalityAddToCart(Category.BOOKS, customer, eletronics, book, clothing, productsToSelect);
-		}
-		default -> System.out.println("Invalid option!");
-		}
+		ProductsByCategoryDTO productsByCategory = ProductChooseStrategy.getProductsByCategoryDTOBy(addOptionProductsfromCategory);
+		
+		defaultFunctionalityAddToCart(productsByCategory.getCategoryEnum(), customer, eletronics, book, clothing, productsByCategory.getProductsToSelect());
 	}
 
 	private void defaultFunctionalityAddToCart(Category productToAdd, Customer customer, Eletronics eletronics,

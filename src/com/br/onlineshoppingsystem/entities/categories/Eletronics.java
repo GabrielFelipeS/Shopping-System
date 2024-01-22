@@ -12,6 +12,7 @@ public class Eletronics extends Products {
             new Products("Smartphone", "The latest smartphone with advanced features.", 699.99, Category.ELETRONICS),
             new Products("Headphones", "Noise-canceling headphones for immersive audio.", 149.99, Category.ELETRONICS)
     ));
+    
     public Eletronics() {
     }
 
