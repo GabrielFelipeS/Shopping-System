@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import com.br.onlineshoppingsystem.domain.Customer;
 import com.br.onlineshoppingsystem.entities.ShoppingCart;
-import com.br.onlineshoppingsystem.entities.ShoppingSystem;
 import com.br.onlineshoppingsystem.entities.Validator;
 import com.br.onlineshoppingsystem.entities.Singletons.SingletonScanner;
 

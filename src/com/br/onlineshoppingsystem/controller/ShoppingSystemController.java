@@ -1,11 +1,15 @@
-package com.br.onlineshoppingsystem.entities;
+package com.br.onlineshoppingsystem.controller;
 
+import com.br.onlineshoppingsystem.entities.EMenuOption;
+import com.br.onlineshoppingsystem.entities.IShoppingSystem;
+import com.br.onlineshoppingsystem.entities.Order;
+import com.br.onlineshoppingsystem.entities.Products;
+import com.br.onlineshoppingsystem.entities.ShoppingCartItems;
 import com.br.onlineshoppingsystem.entities.Singletons.SingletonScanner;
 import com.br.onlineshoppingsystem.entities.categories.Books;
 import com.br.onlineshoppingsystem.entities.categories.Category;
 import com.br.onlineshoppingsystem.entities.categories.Clothing;
 import com.br.onlineshoppingsystem.entities.categories.Eletronics;
-import com.br.onlineshoppingsystem.controller.CustomerController;
 import com.br.onlineshoppingsystem.domain.Customer;
 import com.br.onlineshoppingsystem.entities.paymentMethod.EPaymentMethod;
 import com.br.onlineshoppingsystem.entities.paymentMethod.IPaymentMethod;
@@ -16,8 +20,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
-	private Scanner sc = SingletonScanner.getInstence();
+public class ShoppingSystemController implements IShoppingSystem, IPaymentMethod {
+	private static Scanner sc = SingletonScanner.getInstence();
 
 	@Override
 	public void run() {
@@ -37,7 +41,7 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 
 			EMenuOption choiceFromEMenuOptions = getMenuChoice();
 
-			sc.nextLine();
+			//sc.nextLine();
 
 			switch (choiceFromEMenuOptions) {
 				case BROWSE_PRODUCTS -> browseProducts(new Eletronics(), new Books(), new Clothing());
@@ -394,7 +398,7 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 
 		EPaymentMethod paymentMethodChoice = getPaymentChoice();
 
-		IPaymentMethod paymentMethod = new ShoppingSystem();
+		IPaymentMethod paymentMethod = new ShoppingSystemController();
 
 		switch (paymentMethodChoice) {
 		case CREDITCARD -> paymentMethod.creditCard(totalCostOrder);
@@ -439,8 +443,9 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 
 		System.out.print("Your choice: ");
 		String choice = sc.next();
-		System.out.println(choice);
-
+		System.err.println(choice);
+		
+		
 		if (!containsChoice(Arrays.asList("1", "2", "3", "4", "5", "6"), choice))
 			return EMenuOption.EXCEPTIONS;
 

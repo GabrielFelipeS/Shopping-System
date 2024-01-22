@@ -1,4 +1,4 @@
-package application;
+package com.br.onlineshoppingsystem.application;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,6 +25,8 @@ public class RunAplicationTest {
     	}
     	assertTrue(isExecuted);
     }
+    
+
 }
 
 

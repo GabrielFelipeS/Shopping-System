@@ -1,15 +1,15 @@
 package com.br.onlineshoppingsystem.application;
 
-import com.br.onlineshoppingsystem.entities.ShoppingSystem;
-
 import java.util.Locale;
+
+import com.br.onlineshoppingsystem.controller.ShoppingSystemController;
 
 
 public class App {
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
 
-        ShoppingSystem shoppingSystem = new ShoppingSystem();
+        ShoppingSystemController shoppingSystem = new ShoppingSystemController();
         shoppingSystem.run();
 
     }
