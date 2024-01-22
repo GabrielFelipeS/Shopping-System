@@ -1,9 +1,11 @@
 package com.br.onlineshoppingsystem.entities;
 
+import com.br.onlineshoppingsystem.entities.Singletons.SingletonScanner;
 import com.br.onlineshoppingsystem.entities.categories.Books;
 import com.br.onlineshoppingsystem.entities.categories.Category;
 import com.br.onlineshoppingsystem.entities.categories.Clothing;
 import com.br.onlineshoppingsystem.entities.categories.Eletronics;
+import com.br.onlineshoppingsystem.controller.CustomerController;
 import com.br.onlineshoppingsystem.domain.Customer;
 import com.br.onlineshoppingsystem.entities.paymentMethod.EPaymentMethod;
 import com.br.onlineshoppingsystem.entities.paymentMethod.IPaymentMethod;
@@ -15,64 +17,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
-	Scanner sc = new Scanner(System.in);
+	private Scanner sc = SingletonScanner.getInstence();
 
 	@Override
 	public void run() {
-
 		TerminalView.printWelcome();
 
 		System.out.println("\n-- To create a personalized cart for you, we need you sign up --\n");
 
-		String name, email, addressInput;
-		long address;
-
-		while (true) {
-			System.out.print("Name: ");
-			name = sc.nextLine();
-
-			System.out.print("Email (@gmail.com): ");
-			email = sc.nextLine(); // Change to nextLine() to read the whole line
-
-			System.out.print("Shipping address (CEP/ZIP code - only integers): ");
-			addressInput = sc.nextLine(); // Change to nextLine() to read the whole line
-
-			try {
-				validate(name, email, addressInput);
-				System.out.println(name + " " + email + " " + addressInput);
-				isEmailAndNameValidPersonalized(name, email);
-				addressInput = formatAddress(addressInput);
-				address = Long.parseLong(addressInput); // Try to parse the input as a long
-				break; // Break the loop if a valid address is obtained
-			} catch (NumberFormatException e) {
-				System.out.println("\nInvalid address!");
-				System.out.println("\nInvalid information. Please enter valid values!");
-			} catch (IllegalArgumentException e) {
-				System.out.println();
-				System.out.println(e.getMessage());
-				System.out.println("\nInvalid information. Please enter valid values!");
-			}
-
-			if (!email.endsWith("@gmail.com") || email.length() <= 10)
-				System.out.println("Invalid email!");
-
-
-		}
-
-		Customer customer = new Customer(name, email, address, new ShoppingCart());
+		Customer customer = CustomerController.enterCustomerInformation();
 		choiceOfMenus(customer);
-	}
-
-	private void validate(String name, String email, String addressInput) {
-		if(name.length() <= 2 || name.matches("[\\d]+")) {
-			throw new IllegalArgumentException("Invalid name!");
-		}
-		
-		
-	}
-
-	private String formatAddress(String addressInput) {
-		return addressInput.replaceAll("[^\\d]", "");
 	}
 
 	void choiceOfMenus(Customer customer) {
@@ -86,13 +40,13 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 			sc.nextLine();
 
 			switch (choiceFromEMenuOptions) {
-			case BROWSE_PRODUCTS -> browseProducts(new Eletronics(), new Books(), new Clothing());
-			case ADD_TO_CART -> addToCart(new Eletronics(), new Books(), new Clothing(), customer);
-			case VIEW_CART -> viewCart(customer);
-			case REMOVE_FROM_CART -> removeItemFromCart(new Eletronics(), new Books(), new Clothing(), customer);
-			case CHECKOUT -> checkout(customer);
-			case EXIT -> finishProgram = exit();
-			default -> System.out.println("\nInvalid option. Please try again.");
+				case BROWSE_PRODUCTS -> browseProducts(new Eletronics(), new Books(), new Clothing());
+				case ADD_TO_CART -> addToCart(new Eletronics(), new Books(), new Clothing(), customer);
+				case VIEW_CART -> viewCart(customer);
+				case REMOVE_FROM_CART -> removeItemFromCart(new Eletronics(), new Books(), new Clothing(), customer);
+				case CHECKOUT -> checkout(customer);
+				case EXIT -> finishProgram = exit();
+				default -> System.out.println("\nInvalid option. Please try again.");
 			}
 
 			if (finishProgram)
@@ -105,13 +59,11 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 
 		TerminalView.printAvaibleProduct();
 
-		String productChoose = sc.next();
-
-		while (!containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose)) {
+		String productChoose;
+		do {
 			TerminalView.printChoiceAvailabelProducts();
-
 			productChoose = sc.next();
-		}
+		} while(!containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose));
 
 		System.out.println();
 
@@ -142,8 +94,7 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 
 		for (int i = 0; i < selectedProducts.size(); i++) {
 			Products product = selectedProducts.get(i);
-			System.out.println(
-					(i + 1) + ". " + product.getName() + " - " + product.getDescription() + " $" + product.getPrice());
+			System.out.println((i + 1) + ". " + product);
 		}
 
 	}
@@ -488,6 +439,7 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 
 		System.out.print("Your choice: ");
 		String choice = sc.next();
+		System.out.println(choice);
 
 		if (!containsChoice(Arrays.asList("1", "2", "3", "4", "5", "6"), choice))
 			return EMenuOption.EXCEPTIONS;
@@ -509,10 +461,5 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 
 	public boolean containsChoice(List<String> options, String choice) {
 		return options.contains(choice);
-	}
-
-	@Override
-	public boolean isEmailAndNameValidPersonalized(String name, String email) {
-		return name.length() > 2 && email.endsWith("@gmail.com") && email.length() > 10;
 	}
 }

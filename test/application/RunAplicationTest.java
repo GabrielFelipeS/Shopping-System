@@ -1,7 +1,5 @@
 package application;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -11,8 +9,6 @@ import org.junit.Test;
 
 import com.br.onlineshoppingsystem.application.App;
 
-import POG.RunnerThread;
-
 public class RunAplicationTest {
 
     @Test
@@ -20,7 +16,7 @@ public class RunAplicationTest {
         //InputOutput inputOutput= new InputOutput();
     	boolean isExecuted = true;
     	try {
-    		String input = "Gabriel\ngabriel@gmail.com\n54503901\n6\n";
+    		String input = "Gabriel\ngabriel@gmail.com\n5450901\n6\n";
     		InputStream in = new ByteArrayInputStream(input.getBytes());
     		System.setIn(in);
     		App.main(null);

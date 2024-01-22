@@ -14,5 +14,4 @@ public interface IShoppingSystem {
     void checkout(Customer customer);
     boolean exit();
     void menuDisplay();
-    boolean isEmailAndNameValidPersonalized(String name, String email);
 }
