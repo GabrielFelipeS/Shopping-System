@@ -32,6 +32,10 @@ public class RunnerThread {
 					} else {
 						pressKeyBy(caractere, robot);
 					}
+					/*
+					int CharUni = (int) caractere;
+					robot.keyPress(KeyEvent.getExtendedKeyCodeForChar(CharUni));
+					*/
 				}
 				robot.keyPress(KeyEvent.getExtendedKeyCodeForChar('\n'));
 			}

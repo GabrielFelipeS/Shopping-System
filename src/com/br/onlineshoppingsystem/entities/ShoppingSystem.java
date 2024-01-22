@@ -39,6 +39,7 @@ public class ShoppingSystem implements IShoppingSystem, IPaymentMethod {
 
 			try {
 				validate(name, email, addressInput);
+				System.out.println(name + " " + email + " " + addressInput);
 				isEmailAndNameValidPersonalized(name, email);
 				addressInput = formatAddress(addressInput);
 				address = Long.parseLong(addressInput); // Try to parse the input as a long
