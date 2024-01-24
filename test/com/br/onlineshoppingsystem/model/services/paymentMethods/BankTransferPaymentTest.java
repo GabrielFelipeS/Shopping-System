@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.br.onlineshoppingsystem.UtilSetIn;
 import com.br.onlineshoppingsystem.model.services.paymentMethod.Payment;
 
-public class BankTransferTest extends UtilSetIn{
+public class BankTransferPaymentTest extends UtilSetIn{
 	@Test
 	public void bankTransferTest() {
 		setIn("021\ny\n");

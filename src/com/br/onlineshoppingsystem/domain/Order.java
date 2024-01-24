@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
+
 import com.br.onlineshoppingsystem.model.entities.ShoppingCartItems;
 
 public class Order {
@@ -19,21 +21,13 @@ public class Order {
         this.orderDate = orderDate;
         this.orderTotal = orderTotal;
     }
-
-    public List<ShoppingCartItems> getProducts() {
-        return productsShoppingCart;
-    }
-
+   
     public Customer getCustomer() {
         return customer;
     }
 
     public LocalDateTime getOrderDate() {
         return orderDate;
-    }
-
-    public boolean paymentValidate(int choose){
-        return choose > 0 && choose <= 4;
     }
 
     public Double getOrderTotal() {

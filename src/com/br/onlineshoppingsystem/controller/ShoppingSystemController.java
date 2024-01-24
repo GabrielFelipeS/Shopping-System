@@ -222,9 +222,8 @@ public class ShoppingSystemController implements IPaymentMethod {
 
 			System.out.print("Choice to remove: ");
 			String choice = sc.nextLine();
-
-			if (choice.equals(Integer.toString(cartItems.size() + 1)))
-				return;
+			
+			// TODO Valid choice
 
 			System.out.print("Quantity to remove: ");
 			String quantityToRemoveInput = sc.nextLine();

@@ -17,11 +17,14 @@ public class Clothing extends Products {
     public Clothing() {
     }
 
+
+    // TODO Refactoring
+    /*
     public Clothing(String name, String description, Double price, Category category, List<Products> clothings) {
         super(name, description, price, category);
         this.clothings = clothings;
     }
-
+*/
     public List<Products> getClothings() {
         return clothings;
     }

@@ -17,10 +17,15 @@ public class Eletronics extends Products {
     public Eletronics() {
     }
 
+
+    // TODO Refactoring
+    /*
     public Eletronics(String name, String description, Double price, Category category, List<Products> eletronics) {
         super(name, description, price, category);
         this.eletronics = eletronics;
     }
+    */
+    
     public List<Products> getEletronics() {
         return eletronics;
     }

@@ -19,12 +19,14 @@ public class Books extends Products {
 
     public Books() {
     }
-
-    public Books(String name, String description, Double price, Category category, List<Products> books) {
-        super(name, description, price, category);
+    
+    // TODO Refactoring
+/*
+    public Books(String name, String description, Double price, List<Products> books) {
+        super(name, description, price, Category.BOOKS);
         this.books = books;
     }
-
+*/
     public List<Products> getBooks() {
         return books;
     }

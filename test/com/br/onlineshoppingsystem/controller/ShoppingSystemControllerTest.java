@@ -1,12 +1,12 @@
 package com.br.onlineshoppingsystem.controller;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
@@ -51,6 +51,76 @@ public class ShoppingSystemControllerTest extends UtilSetIn{
 					new ShoppingCart(list)));
 		});
 	}
+	
+	@Test
+	public void invalidChoiceADD_TO_CART1() {
+		setIn("2\n3\n1\nabacate\n6\n");
+		Products product = new Products("To Kill a Mockingbird by Harper Lee", "product teste", 2500.0, Category.BOOKS);
+		Products product2 = new Products("The Great Gatsby by F. Scott Fitzgerald", "product teste", 2500.0, Category.BOOKS);
+		Products product3 = new Products("Becoming by Michelle Obama", "product teste", 2500.0, Category.BOOKS);
+		
+
+		List<ShoppingCartItems> list = 
+				new ArrayList<ShoppingCartItems>(
+						Arrays.asList(
+								new ShoppingCartItems(product, 10), 
+								new ShoppingCartItems(product2, 20), 
+								new ShoppingCartItems(product3, 20)
+							)
+						);
+		
+		assertThrows(NoSuchElementException.class ,() -> {
+			new ShoppingSystemController().choiceOfMenus(new Customer(null, null, null,
+					new ShoppingCart(list)));
+		});
+	}
+	
+	@Test
+	public void invalidChoiceADD_TO_CART2() {
+		setIn("2\n3\n50\n5\n6\n");
+		Products product = new Products("To Kill a Mockingbird by Harper Lee", "product teste", 2500.0, Category.BOOKS);
+		Products product2 = new Products("The Great Gatsby by F. Scott Fitzgerald", "product teste", 2500.0, Category.BOOKS);
+		Products product3 = new Products("Becoming by Michelle Obama", "product teste", 2500.0, Category.BOOKS);
+		
+
+		List<ShoppingCartItems> list = 
+				new ArrayList<ShoppingCartItems>(
+						Arrays.asList(
+								new ShoppingCartItems(product, 10), 
+								new ShoppingCartItems(product2, 20), 
+								new ShoppingCartItems(product3, 20)
+							)
+						);
+		
+		assertThrows(NoSuchElementException.class ,() -> {
+			new ShoppingSystemController().choiceOfMenus(new Customer(null, null, null,
+					new ShoppingCart(list)));
+		});
+	}
+	
+	@Test
+	public void invalidChoiceADD_TO_CART3() {
+		setIn("2\n3\n1\n-5\n6\n");
+		Products product = new Products("To Kill a Mockingbird by Harper Lee", "product teste", 2500.0, Category.BOOKS);
+		Products product2 = new Products("The Great Gatsby by F. Scott Fitzgerald", "product teste", 2500.0, Category.BOOKS);
+		Products product3 = new Products("Becoming by Michelle Obama", "product teste", 2500.0, Category.BOOKS);
+		
+
+		List<ShoppingCartItems> list = 
+				new ArrayList<ShoppingCartItems>(
+						Arrays.asList(
+								new ShoppingCartItems(product, 10), 
+								new ShoppingCartItems(product2, 20), 
+								new ShoppingCartItems(product3, 20)
+							)
+						);
+		
+		assertThrows(NoSuchElementException.class ,() -> {
+			new ShoppingSystemController().choiceOfMenus(new Customer(null, null, null,
+					new ShoppingCart(list)));
+		});
+	}
+
 
 	@Test
 	public void choiceADD_TO_CARTandCanel() {
@@ -156,6 +226,53 @@ public class ShoppingSystemControllerTest extends UtilSetIn{
 					new ShoppingCart(list)));
 		});
 	}
+	
+	@Test
+	public void invalidChoiceREMOVE_FROM_CART1() {
+		setIn("4\n1\nabacate\n6\n");
+		Products product = new Products("To Kill a Mockingbird by Harper Lee", "product teste", 2500.0, Category.BOOKS);
+		Products product2 = new Products("The Great Gatsby by F. Scott Fitzgerald", "product teste", 2500.0, Category.BOOKS);
+		Products product3 = new Products("Becoming by Michelle Obama", "product teste", 2500.0, Category.BOOKS);
+		
+
+		List<ShoppingCartItems> list = 
+				new ArrayList<ShoppingCartItems>(
+						Arrays.asList(
+								new ShoppingCartItems(product, 10), 
+								new ShoppingCartItems(product2, 20), 
+								new ShoppingCartItems(product3, 20)
+							)
+						);
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new ShoppingSystemController().choiceOfMenus(new Customer(null, null, null,
+					new ShoppingCart(list)));
+		});
+	}
+	
+	@Test
+	public void invalidChoiceREMOVE_FROM_CART2() {
+		setIn("4\n100\n10\n6\n");
+		Products product = new Products("To Kill a Mockingbird by Harper Lee", "product teste", 2500.0, Category.BOOKS);
+		Products product2 = new Products("The Great Gatsby by F. Scott Fitzgerald", "product teste", 2500.0, Category.BOOKS);
+		Products product3 = new Products("Becoming by Michelle Obama", "product teste", 2500.0, Category.BOOKS);
+		
+
+		List<ShoppingCartItems> list = 
+				new ArrayList<ShoppingCartItems>(
+						Arrays.asList(
+								new ShoppingCartItems(product, 10), 
+								new ShoppingCartItems(product2, 20), 
+								new ShoppingCartItems(product3, 20)
+							)
+						);
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new ShoppingSystemController().choiceOfMenus(new Customer(null, null, null,
+					new ShoppingCart(list)));
+		});
+	}
+
 
 	@Test
 	public void choiceADD_TO_CARTandREMOVE_FROM_CART() {

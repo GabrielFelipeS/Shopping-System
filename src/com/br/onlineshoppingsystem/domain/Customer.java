@@ -38,8 +38,4 @@ public class Customer {
     public boolean removeQuantityItem(Products product, int quantity) {
     	return shoppingCart.removeItem(product, quantity);
     }
-    
-    public String toString() {
-    	return getName() + " " + getEmail() + " " + getShippingAddress();
-    }
 }

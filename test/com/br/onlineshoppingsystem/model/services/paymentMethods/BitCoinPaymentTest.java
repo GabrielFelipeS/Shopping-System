@@ -10,41 +10,42 @@ import org.junit.jupiter.api.Test;
 import com.br.onlineshoppingsystem.UtilSetIn;
 import com.br.onlineshoppingsystem.model.services.paymentMethod.Payment;
 
-public class PixTest extends UtilSetIn{
+public class BitCoinPaymentTest extends UtilSetIn{
+	
 	@Test
-	public void pixTest1() {
-		setIn("y\n");
+	public void bitcoinTest1() {
+		setIn("1\ny\n");
 		
 		assertDoesNotThrow(() -> {
-			new Payment().pix(2500.0);
+			new Payment().bitcoin(1.0);
 		});
 	}
 	
 	@Test
-	public void pixTest2() {
-		setIn("m\n");
-		
+	public void bitcoinTest2() {
+		setIn("1\nm\n");
 		
 		assertDoesNotThrow(() -> {
-			new Payment().pix(2500.0);
+			new Payment().bitcoin(1.0);
+		});
+	}
+	
+	
+	@Test
+	public void invalidBitcoinTest1() {
+		setIn("1\nn\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().bitcoin(1.0);
 		});
 	}
 	
 	@Test
-	public void invalidArgumentPixTest1() {
-		setIn("invalid\n");
+	public void invalidBitcoinTest2() {
+		setIn("1\ninvalid\n");
 		
 		assertThrows(NoSuchElementException.class, () -> {
-			new Payment().pix(2500.0);
-		});
-	}
-	
-	@Test
-	public void invalidArgumentPixTest2() {
-		setIn("\n");
-		
-		assertThrows(NoSuchElementException.class, () -> {
-			new Payment().pix(2500.0);
+			new Payment().bitcoin(1.0);
 		});
 	}
 }

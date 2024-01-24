@@ -12,9 +12,6 @@ public class ProductChooseStrategy {
 	public static ProductsByCategoryDTO getProductsByCategoryDTOBy(int index) {
 		var pcs = Category.values();
 		
-		if (index <= 0 || index > pcs.length)
-			return null;
-
 		return pcs[index - 1].getProductsByCategoryDTO();
 	}
 
