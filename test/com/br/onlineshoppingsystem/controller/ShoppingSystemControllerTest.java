@@ -11,10 +11,10 @@ import java.util.List;
 import org.junit.Test;
 
 import com.br.onlineshoppingsystem.domain.Customer;
-import com.br.onlineshoppingsystem.entities.Products;
-import com.br.onlineshoppingsystem.entities.ShoppingCart;
-import com.br.onlineshoppingsystem.entities.ShoppingCartItems;
-import com.br.onlineshoppingsystem.entities.categories.Category;
+import com.br.onlineshoppingsystem.model.entities.Products;
+import com.br.onlineshoppingsystem.model.entities.ShoppingCart;
+import com.br.onlineshoppingsystem.model.entities.ShoppingCartItems;
+import com.br.onlineshoppingsystem.model.enums.Category;
 
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ShoppingSystemControllerTest {

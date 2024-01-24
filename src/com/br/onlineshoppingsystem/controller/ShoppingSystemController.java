@@ -1,7 +1,5 @@
 package com.br.onlineshoppingsystem.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -9,23 +7,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.br.onlineshoppingsystem.Service.ShoppingSystemService;
+import com.br.onlineshoppingsystem.DTO.ProductsByCategoryDTO;
 import com.br.onlineshoppingsystem.domain.Customer;
-import com.br.onlineshoppingsystem.entities.EMenuOption;
-import com.br.onlineshoppingsystem.entities.Order;
-import com.br.onlineshoppingsystem.entities.ProductChooseStrategy;
-import com.br.onlineshoppingsystem.entities.Products;
-import com.br.onlineshoppingsystem.entities.ShoppingCart;
-import com.br.onlineshoppingsystem.entities.ShoppingCartItems;
-import com.br.onlineshoppingsystem.entities.DTO.ProductsByCategoryDTO;
-import com.br.onlineshoppingsystem.entities.categories.Books;
-import com.br.onlineshoppingsystem.entities.categories.Category;
-import com.br.onlineshoppingsystem.entities.categories.Clothing;
-import com.br.onlineshoppingsystem.entities.categories.Eletronics;
-import com.br.onlineshoppingsystem.entities.paymentMethod.EPaymentMethod;
-import com.br.onlineshoppingsystem.entities.paymentMethod.IPaymentMethod;
-import com.br.onlineshoppingsystem.entities.paymentMethod.Payment;
-import com.br.onlineshoppingsystem.exceptions.DomainException;
+import com.br.onlineshoppingsystem.domain.Order;
+import com.br.onlineshoppingsystem.model.entities.Products;
+import com.br.onlineshoppingsystem.model.entities.ShoppingCart;
+import com.br.onlineshoppingsystem.model.entities.ShoppingCartItems;
+import com.br.onlineshoppingsystem.model.entities.categories.Books;
+import com.br.onlineshoppingsystem.model.entities.categories.Clothing;
+import com.br.onlineshoppingsystem.model.entities.categories.Eletronics;
+import com.br.onlineshoppingsystem.model.enums.Category;
+import com.br.onlineshoppingsystem.model.enums.EMenuOption;
+import com.br.onlineshoppingsystem.model.enums.EPaymentMethod;
+import com.br.onlineshoppingsystem.model.exceptions.DomainException;
+import com.br.onlineshoppingsystem.model.services.ShoppingSystemService;
+import com.br.onlineshoppingsystem.model.services.paymentMethod.IPaymentMethod;
+import com.br.onlineshoppingsystem.model.services.paymentMethod.Payment;
+import com.br.onlineshoppingsystem.strategy.ProductChooseStrategy;
 import com.br.onlineshoppingsystem.view.TerminalView;
 
 public class ShoppingSystemController implements IPaymentMethod {
@@ -296,7 +294,7 @@ System.out.println(quantityToRemove);
 		Double totalCostOrder = customer.getShoppingCart().totalCost();
 
 		Order order = new Order(shoppingCartItemsList, customer, LocalDateTime.now(), totalCostOrder);
-
+		
 		List<ShoppingCartItems> orderCostumerItems = order.getCustomer().getShoppingCart().getItems();
 		int totalItems = 0;
 

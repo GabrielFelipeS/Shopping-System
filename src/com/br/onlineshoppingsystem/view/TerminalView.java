@@ -2,9 +2,9 @@ package com.br.onlineshoppingsystem.view;
 
 import java.util.List;
 
-import com.br.onlineshoppingsystem.entities.ProductChooseStrategy;
-import com.br.onlineshoppingsystem.entities.Products;
-import com.br.onlineshoppingsystem.entities.categories.Category;
+import com.br.onlineshoppingsystem.model.entities.Products;
+import com.br.onlineshoppingsystem.model.enums.Category;
+import com.br.onlineshoppingsystem.strategy.ProductChooseStrategy;
 
 public class TerminalView {
 	public static void printWelcome() {

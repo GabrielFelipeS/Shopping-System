@@ -1,7 +1,7 @@
 package com.br.onlineshoppingsystem.domain;
 
-import com.br.onlineshoppingsystem.entities.Products;
-import com.br.onlineshoppingsystem.entities.ShoppingCart;
+import com.br.onlineshoppingsystem.model.entities.Products;
+import com.br.onlineshoppingsystem.model.entities.ShoppingCart;
 
 public class Customer {
     private String name;

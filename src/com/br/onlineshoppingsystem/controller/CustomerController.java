@@ -3,22 +3,20 @@ package com.br.onlineshoppingsystem.controller;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-import com.br.onlineshoppingsystem.Service.CustomerService;
 import com.br.onlineshoppingsystem.domain.Customer;
-import com.br.onlineshoppingsystem.entities.ShoppingCart;
-import com.br.onlineshoppingsystem.entities.Validator;
-import com.br.onlineshoppingsystem.entities.Singletons.SingletonScanner;
+import com.br.onlineshoppingsystem.model.services.CustomerService;
+import com.br.onlineshoppingsystem.validation.customer.ValidatorCustomer;
 
 public class CustomerController {
-	private static Scanner sc = SingletonScanner.getInstence();
+	private static Scanner sc = new Scanner(System.in);
 
 	public static Customer enterCustomerInformation() {
 
-		 String name = scanString("Name: ", Validator::validCustomerInformationName);
+		 String name = scanString("Name: ", ValidatorCustomer::validCustomerInformationName);
 
-		 String email = scanString("Email: ", Validator::validCustomerInformationEmail);
+		 String email = scanString("Email: ", ValidatorCustomer::validCustomerInformationEmail);
 
-		 String addressInput = scanString("Shipping address (CEP/ZIP code - only integers): ", Validator::validCustomerInformationAddress);
+		 String addressInput = scanString("Shipping address (CEP/ZIP code - only integers): ", ValidatorCustomer::validCustomerInformationAddress);
 	
 		return CustomerService.createCustomer(name, email, addressInput);
 	}

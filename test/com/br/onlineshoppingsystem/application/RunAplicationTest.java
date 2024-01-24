@@ -28,13 +28,14 @@ public class RunAplicationTest {
     }
     
     @Test
-    public void a() {
-    	setIn("6\n");
+    public void shouldTakeUserInput2() {
+    	setIn("gab\ngabriel@gmil.com\ngabriel@gmail.com\n12345678");
     	
-    	assertDoesNotThrow(() -> {
-    		new ShoppingSystemController().getMenuChoice();
+    	assertThrows(NoSuchElementException.class ,() -> {
+    		App.main(null);
     	});
     }
+    
     
 
 }
