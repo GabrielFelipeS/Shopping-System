@@ -19,13 +19,23 @@ public class PaymentMethodsTest {
 	}
 	
 	@Test
-	public void creditCardTest() {
+	public void creditCardTest1() {
 		setIn("00000000000000\n123\n12/3456\n");
 		
 		assertDoesNotThrow(() -> {
 			new Payment().creditCard(2500.0);
 		});
 	}
+	
+	@Test
+	public void creditCardTest2() {
+		setIn("m\n6\n");
+		
+		assertDoesNotThrow(() -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
 	
 	@Test
 	public void invalidCardNumberCreditCardTes1() {
@@ -46,13 +56,87 @@ public class PaymentMethodsTest {
 	}
 	
 	@Test
-	public void invalidCvvInputCreditCardTes3() {
-		setIn("00000000000000\n123\n12/3456\n");
+	public void invalidCardNumberCreditCardTes3() {
+		setIn("0000000A000000\n123\n12/3456\n");
 		
 		assertThrows(NoSuchElementException.class, () -> {
 			new Payment().creditCard(2500.0);
 		});
 	}
+	
+	@Test
+	public void invalidCvvInputCreditCardTes1() {
+		setIn("00000000000000\n1234\n12/3456\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
+	@Test
+	public void invalidCvvInputCreditCardTes2() {
+		setIn("00000000000000\n000\n12/3456\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
+	@Test
+	public void invalidCvvInputCreditCardTes3() {
+		setIn("00000000000000\n0A0\n12/3456\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
+	@Test
+	public void invalidDueDateInputCreditCardTes1() {
+		setIn("00000000000000\n123\n00/0000\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
+	@Test
+	public void invalidDueDateInputCreditCardTes2() {
+		setIn("00000000000000\n123\n01/1900\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
+	@Test
+	public void invalidDueDateInputCreditCardTes3() {
+		setIn("00000000000000\n123\n01/2023\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
+	@Test
+	public void invalidDueDateInputCreditCardTes4() {
+		setIn("00000000000000\n123\n01/2A23\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
+	
+	@Test
+	public void invalidDueDateInputCreditCardTes5() {
+		setIn("00000000000000\n123\nA1/2023\n");
+		
+		assertThrows(NoSuchElementException.class, () -> {
+			new Payment().creditCard(2500.0);
+		});
+	}
+	
 	
 	@Test
 	public void bankTransferTest() {

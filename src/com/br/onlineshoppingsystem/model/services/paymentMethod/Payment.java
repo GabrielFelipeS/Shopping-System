@@ -15,7 +15,7 @@ public class Payment  {
 	public void creditCard(Double orderTotalCost) {
 
         // Pattern to format Due date of credit card (month(2 digits) / year (4 digits))
-        SimpleDateFormat df = new SimpleDateFormat("MM/yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
         System.out.println("\n--- Credit cart ---");
         long cardNumber;
@@ -29,15 +29,17 @@ public class Payment  {
             System.out.print("Card number or [m] to go back to menu: ");
             String cardNumberInput = sc.next();
 
+            if (cardNumberInput.equals("m")) return;
+            
             System.out.print("Write CVV: ");
             String cvvInput = sc.next();
 
             System.out.print("Due date: ");
             String dueDateInput = sc.next();
-
+            
             try {
 
-                if (cardNumberInput.equals("m")) return;
+                
 
                 if (cardNumberInput.length() > 16 || cardNumberInput.length() < 14){
                 	throw new DomainException("\nPlease a right Card number valid!");
@@ -55,8 +57,8 @@ public class Payment  {
 
                 cardNumber = Long.parseLong(cardNumberInput);
                 cvv = Integer.parseInt(cvvInput);
-                dueDate = df.parse(dueDateInput);
-
+                dueDate = df.parse("01/"+dueDateInput);
+                System.out.println(dueDate);
                 // Due date credit card should not be before the instant now
                 if (dueDate.before(Date.from(Instant.now()))){
                     throw new DomainException("\nPlease a right Due date value!");
