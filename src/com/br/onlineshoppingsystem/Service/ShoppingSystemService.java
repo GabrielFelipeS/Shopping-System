@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.br.onlineshoppingsystem.entities.EMenuOption;
-import com.br.onlineshoppingsystem.entities.ProductChooseStrategy;
+import com.br.onlineshoppingsystem.entities.categories.Category;
 import com.br.onlineshoppingsystem.entities.paymentMethod.EPaymentMethod;
 import com.br.onlineshoppingsystem.view.TerminalView;
 
@@ -30,7 +30,7 @@ public class ShoppingSystemService {
 	
 	public static boolean containsChoice(String choice) {
 		int i = Integer.parseInt(choice);
-		return i > 0 && i <= ProductChooseStrategy.values().length;
+		return i > 0 && i <= Category.values().length;
 	}
 
 
