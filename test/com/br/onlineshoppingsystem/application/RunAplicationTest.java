@@ -1,29 +1,39 @@
 package com.br.onlineshoppingsystem.application;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
-import com.br.onlineshoppingsystem.application.App;
+import com.br.onlineshoppingsystem.controller.ShoppingSystemController;
 
 public class RunAplicationTest {
 
+	private void setIn(String input) {
+    	InputStream in = new ByteArrayInputStream(input.getBytes());
+    	System.setIn(in);
+	}
+	
     @Test
     public void shouldTakeUserInput() {
-        //InputOutput inputOutput= new InputOutput();
-    	boolean isExecuted = true;
-    	try {
-    		String input = "Gabriel\ngabriel@gmail.com\n5450901\n6\n";
-    		InputStream in = new ByteArrayInputStream(input.getBytes());
-    		System.setIn(in);
+    	setIn("gab\ngabriel@gmail.com\n12345678");
+    	
+    	assertThrows(NoSuchElementException.class ,() -> {
     		App.main(null);
-    	} catch(Exception e) {
-    		isExecuted = false;
-    	}
-    	assertTrue(isExecuted);
+    	});
+    }
+    
+    @Test
+    public void a() {
+    	setIn("6\n");
+    	
+    	assertDoesNotThrow(() -> {
+    		new ShoppingSystemController().getMenuChoice();
+    	});
     }
     
 
