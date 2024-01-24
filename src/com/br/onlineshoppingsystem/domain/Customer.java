@@ -35,6 +35,10 @@ public class Customer {
         shoppingCart.addItem(product, quantity);
     }
     
+    public boolean removeQuantityItem(Products product, int quantity) {
+    	return shoppingCart.removeItem(product, quantity);
+    }
+    
     public String toString() {
     	return getName() + " " + getEmail() + " " + getShippingAddress();
     }

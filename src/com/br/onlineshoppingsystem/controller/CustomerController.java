@@ -16,7 +16,7 @@ public class CustomerController {
 
 		 String name = scanString("Name: ", Validator::validCustomerInformationName);
 
-		 String email = scanString("Email (@gmail.com): ", Validator::validCustomerInformationEmail);
+		 String email = scanString("Email: ", Validator::validCustomerInformationEmail);
 
 		 String addressInput = scanString("Shipping address (CEP/ZIP code - only integers): ", Validator::validCustomerInformationAddress);
 	

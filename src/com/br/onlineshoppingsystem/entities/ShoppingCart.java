@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingCart {
-	private List<ShoppingCartItems> items = new ArrayList<>();
+	private List<ShoppingCartItems> items;
 
 	public ShoppingCart() {
+		this(new ArrayList<>());
 	}
 
 	public ShoppingCart(List<ShoppingCartItems> items) {
@@ -26,21 +27,27 @@ public class ShoppingCart {
 				return;
 			}
 		}
+		
 		// if it is false so just add an item
 		items.add(new ShoppingCartItems(products, quantity));
 	}
 
-	public void removeItem(Products products, int quantity) {
+	public boolean removeItem(Products products, int quantity) {
 		for (ShoppingCartItems carItem : items) {
 			if (carItem.getProduct().getName().equals(products.getName())) {
-				carItem.decrementQuantity(quantity);
-				return;
+				boolean isSucess = carItem.decrementQuantity(quantity);
+				
+				if(carItem.getQuantity() == 0)
+					removeEntireProduct(carItem);
+				
+				return isSucess;
 			}
 		}
-		items.remove(new ShoppingCartItems(products, quantity));
+		return false;
+		//items.remove(new ShoppingCartItems(products, quantity));
 	}
 
-	public void removeEntireProduct(ShoppingCartItems shoppingCartItem) {
+	private void removeEntireProduct(ShoppingCartItems shoppingCartItem) {
 		getItems().remove(shoppingCartItem);
 	}
 

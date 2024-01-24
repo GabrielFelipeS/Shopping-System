@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.br.onlineshoppingsystem.entities.ProductChooseStrategy;
 import com.br.onlineshoppingsystem.entities.Products;
+import com.br.onlineshoppingsystem.entities.categories.Category;
 
 public class TerminalView {
 	public static void printWelcome() {
@@ -30,7 +31,7 @@ public class TerminalView {
 	}
 
 	public static void printChoiceAvailabelProducts() {
-		var pcs = ProductChooseStrategy.values();
+		var pcs = Category.values();
 		int i;
 		for(i = 1;i <= pcs.length; i++) {
 			System.out.printf("%d. %s\n", i, ProductChooseStrategy.getProductsByCategoryDTOBy(i).categoryName());

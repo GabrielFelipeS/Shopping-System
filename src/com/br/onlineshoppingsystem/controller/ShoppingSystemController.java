@@ -1,5 +1,7 @@
 package com.br.onlineshoppingsystem.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -13,6 +15,7 @@ import com.br.onlineshoppingsystem.entities.EMenuOption;
 import com.br.onlineshoppingsystem.entities.Order;
 import com.br.onlineshoppingsystem.entities.ProductChooseStrategy;
 import com.br.onlineshoppingsystem.entities.Products;
+import com.br.onlineshoppingsystem.entities.ShoppingCart;
 import com.br.onlineshoppingsystem.entities.ShoppingCartItems;
 import com.br.onlineshoppingsystem.entities.DTO.ProductsByCategoryDTO;
 import com.br.onlineshoppingsystem.entities.categories.Books;
@@ -21,12 +24,19 @@ import com.br.onlineshoppingsystem.entities.categories.Clothing;
 import com.br.onlineshoppingsystem.entities.categories.Eletronics;
 import com.br.onlineshoppingsystem.entities.paymentMethod.EPaymentMethod;
 import com.br.onlineshoppingsystem.entities.paymentMethod.IPaymentMethod;
+import com.br.onlineshoppingsystem.entities.paymentMethod.Payment;
 import com.br.onlineshoppingsystem.exceptions.DomainException;
 import com.br.onlineshoppingsystem.view.TerminalView;
 
 public class ShoppingSystemController implements IPaymentMethod {
 	private Scanner sc = new Scanner(System.in);
 
+	public static void main(String[] args) {
+		new ShoppingSystemController()
+		.choiceOfMenus(new Customer("Gabriel", "gabriel@gmail.com", 0000000L, new ShoppingCart()));
+
+	}
+	
 	public static boolean containsChoice(List<String> options, String choice) {
 		return options.contains(choice);
 	}
@@ -74,9 +84,10 @@ public class ShoppingSystemController implements IPaymentMethod {
 			productChoose = sc.next();
 
 		} while (!ShoppingSystemService.containsChoice(Arrays.asList("1", "2", "3", "4"), productChoose));
-
+		if (productChoose.equals("4")) return;
+		
 		ProductsByCategoryDTO productsByCategory = ProductChooseStrategy.getProductsByCategoryDTOBy(productChoose);
-
+		
 		System.out.println("\nHere are the products in the " + productsByCategory.categoryName() + " category:\n");
 		
 		int tam = productsByCategory.size();
@@ -90,13 +101,12 @@ public class ShoppingSystemController implements IPaymentMethod {
 	public void addToCart(Eletronics eletronics, Books book, Clothing clothing, Customer customer) {
 		TerminalView.printToAddCart();
 		System.out.println("\nFrom what category:");
-		TerminalView.printChoiceAvailabelProducts();
-		System.out.print("Your choice: ");
-		
+				
 		String addOptionProductsfromCategory;
 		do {
 			TerminalView.printChoiceAvailabelProducts();
-			addOptionProductsfromCategory = sc.next();
+			System.out.print("Your choice: ");
+			addOptionProductsfromCategory = sc.nextLine();
 
 		} while (!ShoppingSystemService.containsChoice(addOptionProductsfromCategory));
 
@@ -141,7 +151,7 @@ public class ShoppingSystemController implements IPaymentMethod {
 			}
 		}
 
-		var pcs = ProductChooseStrategy.valueOf(productToAdd.toString()).getProductsByCategoryDTO();
+		var pcs = productToAdd.getProductsByCategoryDTO();
 		
 		customer.addToShoppingCart(pcs.get(Integer.parseInt(optionAddCart) - 1), quantity);
 		
@@ -213,13 +223,13 @@ public class ShoppingSystemController implements IPaymentMethod {
 		while (true) {
 
 			System.out.print("Choice to remove: ");
-			String choice = sc.next();
+			String choice = sc.nextLine();
 
 			if (choice.equals(Integer.toString(cartItems.size() + 1)))
 				return;
 
 			System.out.print("Quantity to remove: ");
-			String quantityToRemoveInput = sc.next();
+			String quantityToRemoveInput = sc.nextLine();
 
 			int quantityToRemove;
 
@@ -227,22 +237,19 @@ public class ShoppingSystemController implements IPaymentMethod {
 
 				try {
 					quantityToRemove = Integer.parseInt(quantityToRemoveInput);
-
+System.out.println(quantityToRemove);
+					
 					ShoppingCartItems itemToRemove = customer.getShoppingCart().getItems()
 							.get(Integer.parseInt(choice) - 1);
 
-					if (quantityToRemove == itemToRemove.getQuantity()) {
-
-						customer.getShoppingCart().removeEntireProduct(itemToRemove);
-
-					} else if (quantityToRemove < itemToRemove.getQuantity() && quantityToRemove > 0) {
-
-						itemToRemove.decrementQuantity(quantityToRemove);
-
+					boolean isSucess = customer.removeQuantityItem(itemToRemove.getProduct(), quantityToRemove);
+					
+					if(isSucess) {
+						break;
 					} else {
-						throw new DomainException("\nInvalid quantity!\n");
+						throw new DomainException("\nInvalid quantity!\n");	
 					}
-					break;
+					
 
 				} catch (NumberFormatException | DomainException e) {
 
@@ -334,7 +341,7 @@ public class ShoppingSystemController implements IPaymentMethod {
 
 		EPaymentMethod paymentMethodChoice = getPaymentChoice();
 
-		IPaymentMethod paymentMethod = new ShoppingSystemController();
+		Payment paymentMethod = new Payment();
 
 		switch (paymentMethodChoice) {
 		case CREDITCARD -> paymentMethod.creditCard(totalCostOrder);
@@ -354,16 +361,15 @@ public class ShoppingSystemController implements IPaymentMethod {
 	public EMenuOption getMenuChoice() {
 
 		System.out.print("Your choice: ");
-		String choice = sc.next();
+		String choice = sc.nextLine();
 		System.err.println(choice);
-		sc.nextLine();
 
 		return ShoppingSystemService.getMenuChoice(choice);
 	}
 
 	public EPaymentMethod getPaymentChoice() {
 		System.out.print("Please choose an option: ");
-		String choice = sc.next();
+		String choice = sc.nextLine();
 
 		return ShoppingSystemService.getPaymentChoice(choice);
 	}

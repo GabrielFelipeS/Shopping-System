@@ -14,7 +14,7 @@ public record ProductsByCategoryDTO(String categoryName, List<Products> selected
 	}
 	
 	public Category getCategoryEnum() {
-		return Category.valueOf(categoryName);
+		return Category.valueOf(categoryName.toUpperCase());
 	}
 
 	public List<Products> getProductsToSelect() {

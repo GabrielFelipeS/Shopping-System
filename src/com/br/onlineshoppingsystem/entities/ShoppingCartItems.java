@@ -19,7 +19,11 @@ public class ShoppingCartItems {
     public void incrementQuantity(int amount){
         quantity += amount;
     }
-    public void decrementQuantity(int amount){
-        quantity -= amount;
+    public boolean decrementQuantity(int amount){
+    	if(quantity >= amount) {
+    		quantity -= amount;
+    		return true;
+    	} 
+    	return false;
     }
 }
